@@ -1,50 +1,69 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report:
+- Version change: new → 1.0.0
+- Added principles: Static-First, Mobile-Responsive Design, Accessibility-First, Performance-Optimized, User-Centered Design
+- Added sections: Technical Standards, Quality Assurance
+- Templates requiring updates: ✅ All verified compatible
+- Follow-up TODOs: None
+-->
+
+# Game Order Generator Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Static-First
+All functionality MUST be implemented as a static web page with no server dependencies. The application MUST work entirely through client-side JavaScript, HTML, and CSS. No external APIs or databases are required for core functionality. Local storage MAY be used for user preferences and temporary data persistence.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+**Rationale**: Ensures maximum portability, zero hosting costs, and offline capability for users.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### II. Mobile-Responsive Design
+The application MUST provide an optimal experience across all device sizes from mobile phones (320px width) to desktop screens (1920px+ width). Touch interactions MUST be prioritized for mobile users. All interactive elements MUST meet minimum touch target sizes (44px minimum).
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+**Rationale**: Game organizers often work on mobile devices during events and need full functionality regardless of device.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### III. Accessibility-First (NON-NEGOTIABLE)
+All features MUST comply with WCAG 2.1 AA standards. Keyboard navigation MUST be fully supported. Screen reader compatibility is mandatory. Color MUST NOT be the only means of conveying information. Alt text and ARIA labels MUST be provided for all interactive elements.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+**Rationale**: Gaming communities are diverse, and the tool must be usable by everyone regardless of ability.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+### IV. Performance-Optimized
+Initial page load MUST complete within 3 seconds on 3G connections. Total bundle size MUST remain under 500KB (including assets). All user interactions MUST provide immediate feedback within 100ms. No external CDN dependencies are allowed for critical functionality.
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+**Rationale**: Game events often have poor internet connectivity, requiring fast, lightweight applications.
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+### V. User-Centered Design
+Interface design MUST prioritize common game organization workflows. Features MUST be discoverable without documentation. Error states MUST provide clear, actionable guidance. User input MUST be validated in real-time with helpful feedback.
+
+**Rationale**: Game organizers need intuitive tools that work under time pressure during events.
+
+## Technical Standards
+
+**Language Stack**: HTML5, CSS3, Vanilla JavaScript (ES2020+)
+**Browser Support**: Chrome 90+, Firefox 88+, Safari 14+, Edge 90+
+**Build Tools**: Optional build step for optimization only (source must work unbundled)
+**File Structure**: Single-page application with modular JavaScript components
+**Testing**: Manual testing for all user scenarios, automated accessibility testing
+**Documentation**: Inline code comments for complex logic, README for setup
+
+## Quality Assurance
+
+**Testing Requirements**:
+- Manual testing on mobile, tablet, and desktop viewports
+- Screen reader testing with NVDA/VoiceOver
+- Performance testing on throttled connections
+- Cross-browser compatibility verification
+
+**Review Process**:
+- All changes require verification against accessibility standards
+- Performance budget must be validated before deployment
+- Mobile usability must be confirmed on actual devices
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+This constitution supersedes all other development practices. All features and changes MUST comply with the stated principles. Any principle violations require explicit justification and amendment approval.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Amendment Process**: Constitution changes require updating this document with rationale, incrementing version number, and updating dependent templates.
+
+**Compliance Review**: Every feature implementation must verify adherence to all five core principles before completion.
+
+**Version**: 1.0.0 | **Ratified**: 2025-10-26 | **Last Amended**: 2025-10-26
