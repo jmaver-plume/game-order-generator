@@ -458,6 +458,11 @@ button:focus {
     box-shadow: 0 6px 18px rgba(0,0,0,0.30);
     pointer-events: none;
     user-select: none;
+    -webkit-user-select: none; /* Prevent selection highlight on iOS/Safari */
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-touch-callout: none; /* Disable callout menu on long press */
+    -webkit-tap-highlight-color: transparent; /* Remove tap highlight */
     transition: transform 0.08s ease-out, background-color 0.2s;
     border: 3px solid rgba(255,255,255,0.6);
 }

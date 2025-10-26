@@ -53,7 +53,7 @@
 - [ ] T015 [P] [US1] Implement pointer move batching (requestAnimationFrame) for position updates in `app.js`
 - [ ] T016 [US1] Add marker base styles (size, color) in `styles.css`
 - [x] T016 [US1] Add marker base styles (size, color) in `styles.css`
-- [ ] T017 [US1] Add numeric label inside marker (index assignment) in `app.js`
+- [x] T017 [US1] (UPDATED) Remove visible numeric label; rely on color differentiation & aria-label for accessibility in `app.js`
 - [ ] T018 [US1] Display active finger count UI element in `index.html`
 - [ ] T019 [US1] Enforce max 6 touches (ignore additional) in `app.js`
 - [ ] T020 [US1] Announce first finger detected & total count changes via announce() in `app.js`

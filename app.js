@@ -155,7 +155,9 @@
             const el = document.createElement('div');
             const index = this.touches.size + 1;
             el.className = 'finger-marker finger-color-' + index;
-            el.textContent = String(index); // visible label
+            // Removed visible numeric label (T017 updated) – rely on distinct color.
+            // Provide accessible name so screen readers can announce finger changes.
+            el.setAttribute('aria-label', 'Finger ' + index);
             this.surface.appendChild(el);
             return el;
         },
