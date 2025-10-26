@@ -26,17 +26,24 @@
         return fisherYatesShuffle(order);
     }
 
-    // Announce message to screen readers
+    // Announce message to screen readers (centralized + dedup)
     function announce(message) {
         const liveRegion = $('#ariaLive');
-        if (liveRegion) {
-            liveRegion.textContent = message;
-            // Clear after announcement
-            setTimeout(() => {
-                liveRegion.textContent = '';
-            }, 1000);
-        }
+        if (!liveRegion) return;
+        liveRegion.textContent = message;
+        setTimeout(() => { if (liveRegion.textContent === message) liveRegion.textContent = ''; }, 1100);
     }
+        const Announce = {
+            mode(mode) { announce(mode === 'numeric' ? 'Player Count mode' : 'Finger Pick mode'); },
+            firstFinger() { announce('First finger detected'); },
+            fingerCount(n) { announce(`${n} finger${n>1?'s':''} detected`); },
+            selecting() { announce('Selecting random finger…'); },
+            winner() { announce('Random finger selected'); },
+            reset() { announce('Reset complete, place fingers'); },
+            needTwo() { announce('Need at least two fingers to select'); },
+            max(max) { announce(`Maximum of ${max} fingers reached`); },
+            blockedSwitch() { announce('Cannot switch modes during selection'); }
+        };
 
     // Mode Manager (Phase2 T006-T010): manages numeric vs finger panel visibility & guards during selection
     const ModeManager = {
@@ -51,6 +58,13 @@
             };
             this.attachEvents();
             this.applyMode('numeric', { announce: false });
+            // Load persisted mode (T044)
+            let initial = 'numeric';
+            try {
+                const stored = localStorage.getItem('gom:lastMode');
+                if (stored === 'finger' || stored === 'numeric') initial = stored;
+            } catch(_) {}
+            this.applyMode(initial, { announce: false });
         },
         attachEvents() {
             if (this.els.toggleButtons) {
@@ -92,11 +106,14 @@
                 }
             });
             if (doAnnounce) {
-                announce(mode === 'numeric' ? 'Switched to Player Count mode' : 'Switched to Finger Pick mode');
+            if (doAnnounce) Announce.mode(mode);
             }
         },
         setSelectionActive(active) {
             this.selectionActive = !!active;
+            if (!this.selectionActive) {
+                try { localStorage.setItem('gom:lastMode', this.current); } catch(_) {}
+            }
         }
     };
 
@@ -109,7 +126,15 @@
         previousCount: 0,
         rafPending: false,
         autoSelectTimer: null,
+        preAnimTimer: null,
+        animInterval: null,
+        animCycleIndex: 0,
         winnerEl: null,
+        config: {
+            autoSelectDelay: 2000,
+            preAnimationDuration: 500, // ms length of anticipation before winner
+            cycleInterval: 110 // ms per marker cycle flash
+        },
         init() {
             this.surface = $('#fingerSurface');
             if (!this.surface) return;
@@ -162,12 +187,19 @@
                 this.pulseMax();
                 return; // ignore beyond limit
             }
+            // Palm-size heuristic (T041): ignore very large contacts (approximate palm)
+            const palmThreshold = 140; // px heuristic; typical finger contact ~40-80px
+            if ((e.width && e.width > palmThreshold) || (e.height && e.height > palmThreshold)) {
+                announce('Large contact ignored');
+                return;
+            }
             if (this.touches.has(e.pointerId)) return;
             const marker = this.createMarker();
             const record = { x: e.clientX, y: e.clientY, el: marker };
             this.touches.set(e.pointerId, record);
             this.positionMarker(marker, record.x, record.y);
             this.updateStatus();
+            // Reset button should NOT appear on initial touches anymore (user preference)
         },
         removeTouch(pointerId) {
             const data = this.touches.get(pointerId);
@@ -181,6 +213,7 @@
                 this.touches.delete(pointerId);
             }
             this.updateStatus();
+            // Do not show reset button until after winner delay
         },
         getActiveMarkers() {
             return Array.from(this.touches.values()).map(r => r.el);
@@ -249,6 +282,8 @@
                 announce('Need at least two fingers to select');
                 return null;
             }
+            // Stop any running anticipation animation
+            this.stopPreAnimation();
             const idx = secureRandomIndex(records.length);
             const winner = records[idx];
             // Keep winner styling identical to active markers; no special class.
@@ -262,7 +297,30 @@
                     this.touches.delete(pid);
                 }
             }
+            // T033 (placeholder) Optional future enhancement: play a subtle sound effect here
+            // Example stub: // if (Audio.enabled) play('select.mp3');
+            // Apply winner pulse animation
+            if (!window.matchMedia || !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                winner.el.classList.add('finger-anim-final');
+                winner.el.addEventListener('animationend', () => {
+                    winner.el.classList.remove('finger-anim-final');
+                }, { once: true });
+            } else {
+                // Reduced motion emphasis: temporary static outline pulse
+                winner.el.classList.add('finger-select-pending');
+                setTimeout(() => winner.el.classList.remove('finger-select-pending'), 600);
+            }
             this.updateStatus();
+            // Delay showing reset button until after short pause (user requested 1–2s)
+            if (this.resetBtn) {
+                this.resetBtn.classList.add('hidden');
+                clearTimeout(this._resetRevealTimer);
+                this._resetRevealTimer = setTimeout(() => {
+                    if (this.winnerEl && ModeManager.selectionActive) {
+                        this.resetBtn.classList.remove('hidden');
+                    }
+                }, 1500); // 1.5s compromise delay
+            }
             return winner;
         }
         ,handleResetClick() {
@@ -273,6 +331,11 @@
                 clearTimeout(this.autoSelectTimer);
                 this.autoSelectTimer = null;
             }
+            if (this.preAnimTimer) {
+                clearTimeout(this.preAnimTimer);
+                this.preAnimTimer = null;
+            }
+            this.stopPreAnimation();
             for (const record of this.touches.values()) {
                 record.el.remove();
             }
@@ -287,23 +350,72 @@
             if (this.surface && this.surface.focus) {
                 this.surface.focus();
             }
+            if (this.resetBtn) this.resetBtn.classList.add('hidden');
         }
         ,scheduleAutoSelection() {
-            // Clear existing timer
-            if (this.autoSelectTimer) {
-                clearTimeout(this.autoSelectTimer);
-                this.autoSelectTimer = null;
-            }
-            // Only schedule if not selected yet and have at least 2 active touches
-            if (!ModeManager.selectionActive && this.touches.size >= 2) {
-                this.autoSelectTimer = setTimeout(() => {
-                    // Double-check conditions before firing
-                    if (!ModeManager.selectionActive && this.touches.size >= 2) {
-                        this.pickRandomWinner();
-                    }
-                }, 2000); // 2s inactivity threshold
-            }
+            // Clear existing timers
+            if (this.autoSelectTimer) { clearTimeout(this.autoSelectTimer); this.autoSelectTimer = null; }
+            if (this.preAnimTimer) { clearTimeout(this.preAnimTimer); this.preAnimTimer = null; }
+            // Guard conditions
+            if (ModeManager.selectionActive || this.touches.size < 2) return;
+            const { autoSelectDelay, preAnimationDuration } = this.config;
+            // Schedule winner selection
+            this.autoSelectTimer = setTimeout(() => {
+                if (!ModeManager.selectionActive && this.touches.size >= 2) {
+                    this.pickRandomWinner();
+                } else {
+                    this.stopPreAnimation();
+                }
+            }, autoSelectDelay);
+            // Schedule anticipation start (avoid negative)
+            const startDelay = Math.max(0, autoSelectDelay - preAnimationDuration);
+            this.preAnimTimer = setTimeout(() => {
+                if (!ModeManager.selectionActive && this.touches.size >= 2) {
+                    this.startPreAnimation();
+                }
+            }, startDelay);
         }
+        ,startPreAnimation() {
+            // Respect reduced motion
+            if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                // Reduced motion fallback (T046): apply static indicator instead of cycling animation
+                const markers = this.getActiveMarkers();
+                if (markers.length < 2) return;
+                announce('Selecting random finger…');
+                markers.forEach(m => m.classList.add('finger-select-pending'));
+                return;
+            }
+            // Safety guards
+            if (ModeManager.selectionActive || this.animInterval) return;
+            const markers = this.getActiveMarkers();
+            if (markers.length < 2) return;
+            announce('Selecting random finger…');
+            this.animCycleIndex = 0;
+            this.animInterval = setInterval(() => {
+                const currentMarkers = this.getActiveMarkers();
+                if (currentMarkers.length < 2 || ModeManager.selectionActive) {
+                    this.stopPreAnimation();
+                    return;
+                }
+                // Remove cycle class from all first to avoid build-up
+                currentMarkers.forEach(m => m.classList.remove('finger-anim-cycle'));
+                const target = currentMarkers[this.animCycleIndex % currentMarkers.length];
+                target.classList.add('finger-anim-cycle');
+                this.animCycleIndex++;
+            }, this.config.cycleInterval);
+        }
+        ,stopPreAnimation() {
+            if (this.animInterval) {
+                clearInterval(this.animInterval);
+                this.animInterval = null;
+            }
+            // Remove cycling class from any markers
+            this.getActiveMarkers().forEach(m => {
+                m.classList.remove('finger-anim-cycle');
+                m.classList.remove('finger-select-pending'); // reduced motion fallback cleanup
+            });
+        }
+        ,updateResetVisibility() { /* legacy noop retained for compatibility; now delayed logic handled in pickRandomWinner */ }
     };
 
     // Secure random helper (US2 T022/T023)
@@ -329,7 +441,7 @@
             ModeManager.init();
             // Initialize finger manager (safe even if panel hidden) T011
             FingerManager.init();
-            console.log('Game Order Generator initialized');
+            // Removed dev init log (T047)
         },
 
         cacheElements() {
@@ -364,7 +476,7 @@
                 input.addEventListener('blur', () => this.validateInput());
             }
 
-            console.log('Event listeners attached');
+            // Removed dev listeners log (T047)
         },
 
         // Validation rules
@@ -513,6 +625,17 @@
             }
             console.table(counts);
             return counts;
+        }
+        ,_fairnessStats: (iterations = 100) => { // T042
+            const records = FingerManager.getActiveRecords();
+            if (records.length < 2) return null;
+            const counts = new Array(records.length).fill(0);
+            for (let i = 0; i < iterations; i++) {
+                counts[secureRandomIndex(records.length)]++;
+            }
+            const distribution = counts.map((c,i) => ({ index: i, count: c, pct: (c/iterations*100).toFixed(1) }));
+            console.table(distribution);
+            return distribution;
         }
     };
 })();

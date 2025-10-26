@@ -60,11 +60,18 @@
             <div id="ariaLive" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
         </section>        
 
-        <!-- Finger selection mode (surface + reset button below) -->
+        <!-- Finger selection mode (surface + centered conditional reset button) -->
         <section class="finger-mode hidden" role="region" aria-label="Finger selection mode" data-mode-panel="finger">
-            <div class="finger-surface" id="fingerSurface" aria-label="Touch capture area" role="application" tabindex="0"></div>
+            <div class="finger-surface" id="fingerSurface" aria-label="Touch capture area" role="application" tabindex="0">
+                <button type="button" class="finger-reset-btn hidden" id="fingerResetBtn" aria-label="Reset finger selection" title="Reset">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <polyline points="1 4 1 10 7 10"></polyline>
+                        <path d="M3.51 15a9 9 0 1 0 .49-9.36L1 10"></path>
+                    </svg>
+                    <span class="sr-only">Reset</span>
+                </button>
+            </div>
         </section>
-        <button type="button" class="finger-reset-btn" id="fingerResetBtn" aria-label="Reset finger selection" title="Reset">Reset</button>
     </main>
 
     <script src="app.js"></script>

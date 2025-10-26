@@ -1,13 +1,15 @@
 # Tasks: Multi-Touch Finger Selection & Dual Mode Toggle
 
+Updated to reflect current implementation state. ✅ done | ⏳ pending | 💤 intentionally skipped | ✖ replaced/removed.
+
 **Input**: Design documents from `/specs/002-finger-selection/`  
 **Prerequisites**: plan.md (required), spec.md (required for user stories)
 
-**Tests**: No formal automated test suite mandated; randomness / fairness and performance checks are manual or optional dev scripts.
+**Tests**: Manual; fairness helpers in console (`_fairnessSample`, `_fairnessStats`).
 
-**Organization**: Tasks grouped by user story to enable independent implementation and testing. Each user story yields a demonstrable increment.
+**Organization**: User stories & phases map to incremental demo value.
 
-## Format: `[ID] [P?] [Story] Description`
+## Format: `[ID] [P?] [Story] Description (notes)`
 
 ---
 ## Phase 1: Setup (Shared Infrastructure)
@@ -21,19 +23,13 @@
 
 ---
 ## Phase 2: Foundational (Blocking Prerequisites)
-**Purpose**: Core scaffolding required before any user story work.
-**⚠️ CRITICAL**: Must finish before user stories start.
+**Purpose**: Core scaffolding before finger logic.
 
-- [ ] T006 Initialize mode state object & export minimal API in `app.js`
-- [ ] T007 Implement mode toggle event handling (numeric ↔ finger) in `app.js`
-- [ ] T008 [P] Add CSS utility classes for hidden/visible mode transitions in `styles.css`
-- [ ] T009 Guard mode switch during selection (state flag placeholder) in `app.js`
-- [ ] T010 Instrument announce() for mode change messaging in `app.js`
-- [x] T006 Initialize mode state object & export minimal API in `app.js`
-- [x] T007 Implement mode toggle event handling (numeric ↔ finger) in `app.js`
-- [x] T008 [P] Add CSS utility classes for hidden/visible mode transitions in `styles.css`
-- [x] T009 Guard mode switch during selection (state flag placeholder) in `app.js`
-- [x] T010 Instrument announce() for mode change messaging in `app.js`
+- ✅ T006 Initialize mode state object & minimal API in `app.js`
+- ✅ T007 Mode toggle event handling (numeric ↔ finger) in `app.js`
+- ✅ T008 [P] Hidden/visible mode transition utilities in `styles.css`
+- ✅ T009 Guard mode switch during selection in `app.js`
+- ✅ T010 Mode change announcements centralize via `Announce.mode()`
 
 **Checkpoint**: Mode switching skeleton works (no finger logic yet); numeric mode unaffected.
 
@@ -43,20 +39,16 @@
 **Independent Test**: Place 2–6 fingers; markers appear with stable identifiers; removal clears marker instantly.
 
 ### Implementation
-- [ ] T011 [US1] Add finger capture surface container (absolute layer) to `index.html`
-- [ ] T012 [US1] Implement pointer down handler → create marker element in `app.js`
-- [ ] T013 [US1] Implement pointer up/cancel handler → remove marker element in `app.js`
-- [x] T011 [US1] Add finger capture surface container (absolute layer) to `index.html`
-- [x] T012 [US1] Implement pointer down handler → create marker element in `app.js`
-- [x] T013 [US1] Implement pointer up/cancel handler → remove marker element in `app.js`
-- [ ] T014 [P] [US1] Maintain active touches map (pointerId → metadata) in `app.js`
-- [ ] T015 [P] [US1] Implement pointer move batching (requestAnimationFrame) for position updates in `app.js`
-- [ ] T016 [US1] Add marker base styles (size, color) in `styles.css`
-- [x] T016 [US1] Add marker base styles (size, color) in `styles.css`
-- [x] T017 [US1] (UPDATED) Remove visible numeric label; rely on color differentiation & aria-label for accessibility in `app.js`
-- [ ] T018 [US1] Display active finger count UI element in `index.html`
-- [ ] T019 [US1] Enforce max 6 touches (ignore additional) in `app.js`
-- [ ] T020 [US1] Announce first finger detected & total count changes via announce() in `app.js`
+- ✅ T011 [US1] Finger capture surface container in `index.html`
+- ✅ T012 [US1] Pointer down → marker creation in `app.js`
+- ✅ T013 [US1] Pointer up/cancel → marker removal in `app.js`
+- ✅ T014 [P] Active touches Map maintained in `app.js`
+- ✅ T015 [P] Pointer move batching via rAF in `app.js`
+- ✅ T016 [US1] Marker base styles (size, color) in `styles.css`
+- ✅ T017 [US1] Removed visible numeric label; using color + aria-label
+- ✖ T018 [US1] Active finger count UI badge (removed / not desired)
+- ✅ T019 [US1] Max touches enforcement (dynamic by hardware ≤6)
+- ✅ T020 [US1] Announce first finger & count changes
 
 **Checkpoint**: Finger placement/removal functional; independent demo possible.
 
@@ -66,13 +58,13 @@
 **Independent Test**: With ≥2 active markers press Select; one winner highlighted; fairness observable over repeated runs.
 
 ### Implementation
-- [x] T021 [US2] Add Select button (disabled <2 touches) to finger section in `index.html`
-- [x] T022 [US2] Implement secure random winner pick using `crypto.getRandomValues` in `app.js`
-- [x] T023 [P] [US2] Fallback to `Math.random` with console warning if crypto unavailable in `app.js`
-- [x] T024 [US2] Highlight winner marker (distinct CSS class) in `styles.css`
-- [x] T025 [US2] Announce winner via live region in `app.js`
-- [x] T026 [US2] Lock selection state (prevent re-select) until reset in `app.js`
-- [x] T027 [P] [US2] Console fairness sampler (30 selections distribution) function in `app.js`
+- ✖ T021 [US2] Manual Select button (removed; auto-select implemented Phase Enhancement)
+- ✅ T022 [US2] Secure random winner pick using `crypto.getRandomValues`
+- ✅ T023 [P] Fallback to `Math.random` warning
+- ✅ T024 [US2] Winner revealed (transient pulse replaces persistent highlight)
+- ✅ T025 [US2] Winner announcement
+- ✅ T026 [US2] Selection lock until reset
+- ✅ T027 [P] Console fairness sampler helper
 
 **Checkpoint**: Random selection demo complete; combined with US1 forms full MVP.
 
@@ -82,12 +74,12 @@
 **Independent Test**: Trigger selection → animation plays → winner revealed → highlight persists until reset.
 
 ### Implementation
-- [ ] T028 [US3] Add pre-selection animation sequence (cycle/pulse markers) in `app.js`
-- [ ] T029 [US3] Add animation CSS classes & transitions in `styles.css`
-- [ ] T030 [P] [US3] Respect reduced motion preference (skip animation) in `app.js`
-- [ ] T031 [US3] Persist winner highlight until reset (no flicker) in `app.js`
-- [ ] T032 [US3] Add distinct winner styling (glow/border) in `styles.css`
-- [ ] T033 [P] [US3] Add optional sound trigger placeholder comment (non-implementation) in `app.js`
+- ✅ T028 [US3] Pre-selection animation cycle logic in `app.js`
+- ✅ T029 [US3] Animation CSS classes & transitions in `styles.css`
+- ✅ T030 [P] Reduced motion respected (skip animations) + static fallback indicator
+- 💤 T031 [US3] Persistent winner highlight (skipped by preference)
+- 💤 T032 [US3] Distinct winner styling glow (skipped; uniform look)
+- ✅ T033 [P] Sound trigger placeholder comment added in `app.js`
 
 **Checkpoint**: Enhanced UX layer independently testable (can layer after MVP).
 
@@ -97,11 +89,11 @@
 **Independent Test**: After selection → press Reset → markers cleared; selection allowed again; toggle enabled.
 
 ### Implementation
-- [x] T034 [US4] Add Reset button to finger mode section in `index.html`
-- [x] T035 [US4] Implement reset logic (clear markers, state flags) in `app.js`
-- [x] T036 [US4] Re-enable selection acceptance & mode toggle post-reset in `app.js`
-- [x] T037 [US4] Focus management: move focus to capture surface after reset in `app.js`
-- [x] T038 [P] [US4] Announce reset completion via live region in `app.js`
+ - ✅ T034 [US4] Reset button (delayed reveal post-winner per refinement)
+- ✅ T035 [US4] Reset logic clearing state & timers
+- ✅ T036 [US4] Re-enable selection & mode toggle post-reset
+- ✅ T037 [US4] Focus moves to capture surface after reset
+- ✅ T038 [P] Reset announcement
 
 **Checkpoint**: Replay flow functional; independent demonstration possible with prior stories stubbed.
 
@@ -109,27 +101,27 @@
 ## Phase 7: Polish & Cross-Cutting
 **Purpose**: Accessibility, performance, cohesion, and fairness extras.
 
-- [ ] T039 Add mode-specific instruction text for finger vs numeric in `index.html`
-- [ ] T040 Ensure numeric mode unaffected (quick regression review) in `app.js`
-- [ ] T041 Add palm-size heuristic (ignore large contacts) in `app.js`
-- [ ] T042 [P] Add fairness distribution helper (100-run stats) in `app.js`
-- [ ] T043 Consolidate announce messages (winner/mode/reset) in single utility in `app.js`
-- [ ] T044 [P] Persist last chosen mode in `localStorage` (optional) in `app.js`
-- [ ] T045 Color contrast audit adjustments for new styles in `styles.css`
-- [ ] T046 [P] Reduced motion fallback style adjustments in `styles.css`
-- [ ] T047 Remove temporary console logs & dev warnings in `app.js`
-- [ ] T048 Update README usage section with finger mode instructions (root `README.md`)
-- [ ] T049 [P] Add manual fairness & accessibility notes file `tests/accessibility/finger-mode.md`
-- [ ] T050 Sign-off checklist: verify FR-001–FR-015 & SC-001–SC-008 (create verification notes `specs/002-finger-selection/checklists/verification.md`)
-- [ ] T051 [P] Prevent iOS Safari pinch/back gestures in finger surface (CSS touch-action:none + gesture event preventDefault) `styles.css` / `app.js`
+ - ✖ T039 Mode-specific instruction text (added then removed for space efficiency)
+- ✅ T040 Numeric mode regression review (no breakage)
+- ✅ T041 Palm-size heuristic (ignore large contacts)
+- ✅ T042 [P] Fairness distribution helper (100-run stats)
+- ✅ T043 Consolidated announce messages utility
+- ✅ T044 [P] Persist last chosen mode (`localStorage`)
+- ✅ T045 Contrast audit adjustments (stronger border, fallback outline)
+- ✅ T046 Reduced motion fallback style (static indicator class)
+- ✅ T047 Removed temporary console logs & warnings
+- ✅ T048 README finger mode instructions update
+- ✅ T049 [P] Fairness & accessibility notes docs created
+- ✅ T050 Sign-off checklist / verification notes
+- ✅ T051 [P] iOS gesture suppression (touch-action + gesture events)
 ---
 ## Enhancement: Auto Selection & Winner Persistence
- - [x] T052 Auto-select after 2s inactivity (add/remove) when ≥2 fingers present in `app.js`
- - [x] T053 Persist winner marker & remove others immediately on selection in `app.js`
- - [x] T054 Remove manual Select button (auto mode only) in `index.html` / cleanup in `app.js`
- - [x] T055 Ignore new touches after selection; keep winner visible even when lifted in `app.js`
- - [x] T056 Enlarge active finger markers to 120px, revert winner to base size in `styles.css` / `app.js`
- - [x] T057 Remove distinct winner highlight; winner retains active styling in `styles.css` / `app.js`
+ - ✅ T052 Auto-select after 2s inactivity (≥2 fingers)
+ - ✅ T053 Persist winner marker; remove others
+ - ✅ T054 Removed manual Select button (auto mode only)
+ - ✅ T055 Ignore new touches post-selection; winner persists
+ - ✅ T056 Enlarged active markers to 120px
+ - ✅ T057 Removed distinct winner highlight (uniform styling)
 
 ---
 ## Dependencies & Execution Order
@@ -164,7 +156,7 @@
 - US3: 6
 - US4: 5
 - Polish: 12
-Total: 50
+Total: 50 (several replaced/removed tasks annotated)
 
 ## MVP Scope Recommendation
 Complete through T027 (US2 winner selection) to deliver core value; optionally include Reset (T034–T038) for smoother demos.

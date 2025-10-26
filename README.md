@@ -1,31 +1,36 @@
 # Game Order Generator
 
-A simple, accessible static web application to generate random turn order for board games and card games.
+An accessible, lightweight web app to decide player order two ways:
+1. Player Count mode: enter total players for a full shuffled turn order.
+2. Finger Pick mode: place multiple fingers on a touch screen—one is randomly chosen after brief anticipation.
 
 ## Quick Start
 
-1. Open `public/index.html` in a modern browser
-2. Enter the number of players (2-20)
-3. Click "Generate Order" or press Enter
-4. View your random turn order
-5. Optionally copy the order to clipboard
+1. Open `index.html` in any modern browser.
+2. Use the toggle to pick a mode.
+3. Player Count: enter 2–20 and press Generate.
+4. Finger Pick: place at least two fingers on the capture area; keep them still. After ~2 seconds of inactivity an anticipation cycle runs, then one finger pulses as the selected starter.
+5. Tap Reset to play another round (Finger Pick mode).
 
 ## Features
 
-- 🎲 Random turn order generation using Fisher-Yates shuffle
-	- (Upcoming) Multi-touch finger selection mode to pick starting player
-- ♿ WCAG 2.1 AA accessible
-- 📱 Fully responsive (mobile-first design)
-- ⚡ Fast and lightweight (< 500KB total)
-- 🔒 Works offline after initial load
-- ⌨️ Full keyboard navigation support
+- 🎲 Unbiased Fisher–Yates shuffle for numeric turn order
+- ✋ Multi-touch Finger Pick (up to 6 or device limit; many mobile devices cap at 5)
+- ⏱ Auto-selection after inactivity (no manual button needed)
+- 💫 Anticipation cycle + winner pulse animation (respects reduced motion preferences)
+- ♿ ARIA live announcements (mode changes, counts, selection, winner, reset)
+- � Mode persistence (remembers last used mode across page reloads)
+- 🧪 Fairness helpers in console: `window.GameOrderGenerator._fairnessStats()`
+- 📱 Responsive layout & large markers for finger coverage
+- 🔒 No dependencies, works offline, zero network calls
+- ⌨️ Full keyboard navigation in Player Count mode
 
 ## Technology
 
 - Vanilla JavaScript (ES2020+)
-- HTML5
-- CSS3
-- Zero external dependencies
+- HTML5 + semantic regions
+- CSS3 (custom properties, reduced motion support)
+- Zero external runtime dependencies
 
 ## Browser Support
 
@@ -34,42 +39,57 @@ A simple, accessible static web application to generate random turn order for bo
 - Safari 14+
 - Edge 90+
 
-## Usage
+## Usage Details
 
-By default you are in Player Count mode: enter a number between 2 and 20 representing the number of players. The application will:
+### Player Count Mode
+1. Enter a number between 2 and 20.
+2. Input validates live; errors announced to assistive tech.
+3. Press Generate (or Enter) to produce a shuffled order.
+4. Read the order visually or with a screen reader (aria-live announcement).
 
-1. Validate your input in real-time
-2. Generate a random permutation of numbers 1 through N
-3. Display the turn order
-4. Allow you to copy the order or generate a new one
+### Finger Pick Mode
+1. Switch to Finger Pick.
+2. Place at least two fingers simultaneously on the surface.
+3. Markers enlarge slightly while active; colors differentiate fingers.
+4. Maintain stillness—after ~2s an anticipation cycle highlights markers sequentially.
+5. A winner pulses once; the winning marker remains while the others disappear.
+6. Lift fingers or press Reset to start a new round.
 
-### Dual Mode (In Progress)
+Notes:
+- Hardware touch limits: Many iOS devices cap at 5 simultaneous touches; app enforces device max (≤6).
+- Reduced motion: If OS setting prefers reduced motion, cycle & pulse animations are skipped (selection still occurs).
+- Fairness: Secure randomness uses `crypto.getRandomValues` when available; fallback warns via console.
 
-Use the mode toggle at the top to switch between:
+## File Structure
 
-- Player Count: Enter total players and generate a full turn order.
-- Finger Pick: (Experimental) Place up to 6 fingers on a touch screen; a later phase will allow randomly selecting one finger as the starting player.
-
-Current state: structural placeholders present for Finger Pick; selection & animation logic will arrive in subsequent iterations.
+```
+index.html     # Main page (both modes)
+styles.css     # Styling & animations
+app.js         # Logic (mode, selection, fairness, announcements)
+specs/         # Specifications & task tracking
+tests/         # (Optional) future manual / script tests
+```
 
 ## Development
 
-No build process required. Simply edit the files in `public/` and refresh your browser.
+No build step. Open `index.html` or serve directory statically. Edits to files reflect immediately on refresh.
 
-### File Structure
+Recommended Dev Checks:
+- Toggle modes after a selection to confirm lock behavior.
+- Run `_fairnessStats(200)` with several fingers placed to inspect distribution.
+- Test with reduced motion enabled in system preferences.
 
-```
-public/
-├── index.html    # Main page
-├── styles.css    # Styles
-└── app.js        # Logic
-```
+## Accessibility
 
-### Testing
+- Live region (`#ariaLive`) announces dynamic events.
+- Finger markers have `aria-label` ("Finger N") even though numeric labels are visually removed for minimal clutter.
+- Focus returns to capture surface after Reset for continued interaction.
 
-- Manual testing on different browsers and devices
-- Accessibility testing with screen readers (NVDA/VoiceOver)
-- Optional randomness validation script (see tests/)
+## Planned Polish (Remaining)
+- Palm-size heuristic to ignore very large contacts.
+- Contrast audit for marker colors under varied lighting / high contrast modes.
+- Reduced motion static indicator (non-animated highlight) before selection.
+- Documentation for accessibility & fairness audits.
 
 ## License
 

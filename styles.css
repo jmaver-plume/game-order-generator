@@ -78,6 +78,7 @@ main {
     display: flex;
     flex-direction: column;
     align-items: center;
+    height: 100dvh;
 }
 
 @media (min-width: 768px) {
@@ -97,7 +98,6 @@ h1 {
     font-size: 1.875rem;
     font-weight: 700;
     color: var(--color-text);
-    letter-spacing: -0.02em;
 }
 
 /* Generator section */
@@ -421,11 +421,15 @@ button:focus {
     background: var(--color-bg);
     border-radius: 24px;
     padding: 0;
-    margin: 0 0 var(--spacing-xl);
+    margin: 0;
     box-shadow: 0 4px 24px rgba(0,0,0,0.06);
     width: 100%;
     position: relative;
+    height: 100%;
 }
+
+/* Finger mode instructions (T039) */
+/* (Removed inline instructions per user preference for space) */
 
 /* Finger surface placeholder (T002 styling minimal) */
 /* Full capture surface (#fingerSurface) height responsive */
@@ -440,6 +444,7 @@ button:focus {
     touch-action: none;
     -ms-touch-action: none;
     overscroll-behavior: contain;
+    position: relative; /* for centered reset button */
 }
 
 .finger-status {
@@ -485,6 +490,12 @@ button:focus {
     transition: width 0.12s ease, height 0.12s ease, transform 0.08s ease-out;
 }
 
+/* Reduced motion fallback pending selection indicator (T046) */
+.finger-select-pending {
+    outline-offset: -4px;
+    box-shadow: 0 0 0 6px rgba(124,58,237,0.35);
+}
+
 /* Distinct color palette per finger (max 6) */
 .finger-color-1 { background:#2563eb; }
 .finger-color-2 { background:#10b981; }
@@ -492,6 +503,9 @@ button:focus {
 .finger-color-4 { background:#ef4444; }
 .finger-color-5 { background:#8b5cf6; }
 .finger-color-6 { background:#ec4899; }
+
+/* Contrast audit enhancement (T045): strong border on default markers for better separation */
+.finger-marker { border: 3px solid rgba(255,255,255,0.85); }
 
 
 /* High contrast adjustments */
@@ -512,18 +526,51 @@ button:focus {
 
 /* Reset button styling (US4 T034) */
 .finger-reset-btn {
-    display: inline-block;
-    /* margin-top: var(--spacing-lg); */
-    padding: 8px 16px;
-    font-size: 0.75rem;
-    font-weight: 600;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: var(--color-primary);
     color: #fff;
     border: none;
-    border-radius: 12px;
+    border-radius: 50%;
     cursor: pointer;
-    transition: background 0.15s ease, transform 0.15s ease;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.30);
+    transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    padding: 0;
 }
-.finger-reset-btn:hover { background: var(--color-primary-hover); }
-.finger-reset-btn:active { transform: scale(0.96); }
-.finger-reset-btn:focus { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+.finger-reset-btn:hover { background: var(--color-primary-hover); box-shadow: 0 8px 24px rgba(0,0,0,0.32); }
+.finger-reset-btn:active { transform: translate(-50%, -50%) scale(0.94); }
+.finger-reset-btn:focus { outline: 3px solid #fff; outline-offset: 4px; }
+
+/* Anticipation cycle animation (Phase 5 Option B) */
+.finger-anim-cycle {
+    animation: fingerCycle 0.18s linear;
+}
+@keyframes fingerCycle {
+    0% { filter: brightness(1); }
+    50% { filter: brightness(1.40); }
+    100% { filter: brightness(1); }
+}
+
+/* Winner pulse animation */
+.finger-anim-final {
+    animation: fingerWinner 0.55s ease-out forwards;
+}
+@keyframes fingerWinner {
+    0% { box-shadow: 0 0 0 0 rgba(255,255,255,0.85), 0 6px 18px rgba(0,0,0,0.30); }
+    40% { box-shadow: 0 0 0 14px rgba(255,255,255,0.55), 0 10px 28px rgba(0,0,0,0.35); }
+    70% { box-shadow: 0 0 0 6px rgba(255,255,255,0.70), 0 8px 22px rgba(0,0,0,0.33); }
+    100% { box-shadow: 0 0 0 4px rgba(255,255,255,0.65), 0 6px 18px rgba(0,0,0,0.30); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .finger-anim-cycle, .finger-anim-final { animation: none !important; }
+    /* Maintain subtle visual cue during pending selection phase */
+    .finger-select-pending { outline-color: rgba(255,255,255,0.95); }
+}
