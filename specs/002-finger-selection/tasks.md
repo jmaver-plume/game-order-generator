@@ -122,6 +122,12 @@
 - [ ] T049 [P] Add manual fairness & accessibility notes file `tests/accessibility/finger-mode.md`
 - [ ] T050 Sign-off checklist: verify FR-001–FR-015 & SC-001–SC-008 (create verification notes `specs/002-finger-selection/checklists/verification.md`)
 - [ ] T051 [P] Prevent iOS Safari pinch/back gestures in finger surface (CSS touch-action:none + gesture event preventDefault) `styles.css` / `app.js`
+---
+## Enhancement: Auto Selection & Winner Persistence
+ - [x] T052 Auto-select after 2s inactivity (add/remove) when ≥2 fingers present in `app.js`
+ - [x] T053 Persist winner marker & remove others immediately on selection in `app.js`
+ - [x] T054 Remove manual Select button (auto mode only) in `index.html` / cleanup in `app.js`
+ - [x] T055 Ignore new touches after selection; keep winner visible even when lifted in `app.js`
 
 ---
 ## Dependencies & Execution Order

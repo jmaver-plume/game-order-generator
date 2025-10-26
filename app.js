@@ -108,6 +108,8 @@
         maxTouches: 6,
         previousCount: 0,
         rafPending: false,
+        autoSelectTimer: null,
+        winnerEl: null,
         init() {
             this.surface = $('#fingerSurface');
             if (!this.surface) return;
@@ -149,6 +151,7 @@
             this.queueMoveBatch();
         },
         addTouch(e) {
+            if (ModeManager.selectionActive) return; // Ignore new touches after selection (T055)
             if (this.touches.size >= this.maxTouches) {
                 // Announce max reached (T019) and pulse surface
                 announce('Maximum of ' + this.maxTouches + ' fingers reached');
@@ -165,8 +168,14 @@
         removeTouch(pointerId) {
             const data = this.touches.get(pointerId);
             if (!data) return;
-            data.el.remove();
-            this.touches.delete(pointerId);
+            // Persist winner marker even after lift if selection done (T053)
+            if (ModeManager.selectionActive && data.el === this.winnerEl) {
+                // Remove from tracking but keep element
+                this.touches.delete(pointerId);
+            } else {
+                data.el.remove();
+                this.touches.delete(pointerId);
+            }
             this.updateStatus();
         },
         getActiveMarkers() {
@@ -198,7 +207,11 @@
             const status = $('#fingerStatus');
             if (!status) return;
             const count = this.touches.size;
-            status.textContent = count === 0 ? 'No fingers detected' : `${count} finger${count>1?'s':''} detected`;
+            if (ModeManager.selectionActive) {
+                status.textContent = 'Winner selected';
+            } else {
+                status.textContent = count === 0 ? 'No fingers detected' : `${count} finger${count>1?'s':''} detected`;
+            }
             // Update badge (T018)
             const badge = $('#fingerCountBadge');
             if (badge) {
@@ -213,11 +226,8 @@
                 }
                 this.previousCount = count;
             }
-            // Enable/disable select button (US2 T021 logic hook)
-            const selectBtn = $('#fingerSelectBtn');
-            if (selectBtn) {
-                selectBtn.disabled = count < 2 || ModeManager.selectionActive;
-            }
+            // Auto-select scheduling (T052)
+            this.scheduleAutoSelection();
         }
         ,queueMoveBatch() {
             if (this.rafPending) return;
@@ -252,9 +262,32 @@
             winner.el.classList.add('finger-winner');
             announce('Random finger selected');
             ModeManager.setSelectionActive(true); // lock mode switching (FR-015)
-            const selectBtn = $('#fingerSelectBtn');
-            if (selectBtn) selectBtn.disabled = true;
+            this.winnerEl = winner.el;
+            // Remove all other markers (T053)
+            for (const [pid, record] of Array.from(this.touches.entries())) {
+                if (record.el !== winner.el) {
+                    record.el.remove();
+                    this.touches.delete(pid);
+                }
+            }
+            this.updateStatus();
             return winner;
+        }
+        ,scheduleAutoSelection() {
+            // Clear existing timer
+            if (this.autoSelectTimer) {
+                clearTimeout(this.autoSelectTimer);
+                this.autoSelectTimer = null;
+            }
+            // Only schedule if not selected yet and have at least 2 active touches
+            if (!ModeManager.selectionActive && this.touches.size >= 2) {
+                this.autoSelectTimer = setTimeout(() => {
+                    // Double-check conditions before firing
+                    if (!ModeManager.selectionActive && this.touches.size >= 2) {
+                        this.pickRandomWinner();
+                    }
+                }, 2000); // 2s inactivity threshold
+            }
         }
     };
 
@@ -281,7 +314,6 @@
             ModeManager.init();
             // Initialize finger manager (safe even if panel hidden) T011
             FingerManager.init();
-            this.attachFingerSelectionEvents();
             console.log('Game Order Generator initialized');
         },
 
@@ -318,14 +350,6 @@
             }
 
             console.log('Event listeners attached');
-        },
-        attachFingerSelectionEvents() {
-            const btn = $('#fingerSelectBtn');
-            if (btn) {
-                btn.addEventListener('click', () => {
-                    FingerManager.pickRandomWinner();
-                });
-            }
         },
 
         // Validation rules
