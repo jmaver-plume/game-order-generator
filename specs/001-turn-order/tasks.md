@@ -15,11 +15,11 @@
 
 **Purpose**: Initialize minimal static project structure.
 
-- [ ] T001 Create `public/` directory structure (public/index.html, styles.css, app.js)
-- [ ] T002 Add base HTML skeleton with landmark regions in `public/index.html`
-- [ ] T003 [P] Add placeholder CSS file with root variables in `public/styles.css`
-- [ ] T004 [P] Initialize basic JS module pattern in `public/app.js`
-- [ ] T005 Add README with quick usage instructions (root `README.md`)
+- [x] T001 Create `public/` directory structure (public/index.html, styles.css, app.js)
+- [x] T002 Add base HTML skeleton with landmark regions in `public/index.html`
+- [x] T003 [P] Add placeholder CSS file with root variables in `public/styles.css`
+- [x] T004 [P] Initialize basic JS module pattern in `public/app.js`
+- [x] T005 Add README with quick usage instructions (root `README.md`)
 
 ---
 
@@ -27,13 +27,13 @@
 
 **Purpose**: Core utilities and accessibility scaffolding required by all stories.
 
-- [ ] T006 Implement accessibility live region container in `public/index.html`
-- [ ] T007 [P] Implement utility: DOM query helpers in `public/app.js`
-- [ ] T008 [P] Implement Fisher-Yates shuffle function stub in `public/app.js`
-- [ ] T009 Add responsive meta tag & viewport scaling in `public/index.html`
-- [ ] T010 Define CSS responsive layout + spacing scale in `public/styles.css`
-- [ ] T011 Add focus outline and reduced motion preferences to `public/styles.css`
-- [ ] T012 Add ARIA roles and labels to structural elements in `public/index.html`
+- [x] T006 Implement accessibility live region container in `public/index.html`
+- [x] T007 [P] Implement utility: DOM query helpers in `public/app.js`
+- [x] T008 [P] Implement Fisher-Yates shuffle function stub in `public/app.js`
+- [x] T009 Add responsive meta tag & viewport scaling in `public/index.html`
+- [x] T010 Define CSS responsive layout + spacing scale in `public/styles.css`
+- [x] T011 Add focus outline and reduced motion preferences to `public/styles.css`
+- [x] T012 Add ARIA roles and labels to structural elements in `public/index.html`
 
 **Checkpoint**: All foundational utilities & structure present; user story work can run in parallel.
 
@@ -45,12 +45,12 @@
 **Independent Test**: Enter 4 -> output is permutation of 1..4; repeat generates new permutations.
 
 ### Implementation
-- [ ] T013 [US1] Add player count input + label with constraints text in `public/index.html`
-- [ ] T014 [P] [US1] Implement parse & trim input logic in `public/app.js`
-- [ ] T015 [P] [US1] Complete Fisher-Yates shuffle implementation in `public/app.js`
-- [ ] T016 [US1] Render permutation list region in `public/index.html`
-- [ ] T017 [US1] Connect Generate button handler to shuffle & render in `public/app.js`
-- [ ] T018 [P] [US1] Add randomness sanity check dev function (1000 iterations N=5 console stats) in `public/app.js`
+- [x] T013 [US1] Add player count input + label with constraints text in `public/index.html`
+- [x] T014 [P] [US1] Implement parse & trim input logic in `public/app.js`
+- [x] T015 [P] [US1] Complete Fisher-Yates shuffle implementation in `public/app.js`
+- [x] T016 [US1] Render permutation list region in `public/index.html`
+- [x] T017 [US1] Connect Generate button handler to shuffle & render in `public/app.js`
+- [x] T018 [P] [US1] Add randomness sanity check dev function (1000 iterations N=5 console stats) in `public/app.js`
 
 ### Optional Tests
 - [ ] T019 [P] [US1] Script to run randomness frequency distribution in `tests/randomness/check.js` (optional)
@@ -65,12 +65,12 @@
 **Independent Test**: Invalid entries show errors (1, 25, blank, abc) and no order produced.
 
 ### Implementation
-- [ ] T020 [US2] Add validation rules (range 2–20, integer) in `public/app.js`
-- [ ] T021 [P] [US2] Display inline error message region tied to input in `public/index.html`
-- [ ] T022 [P] [US2] Implement live validation on input event in `public/app.js`
-- [ ] T023 [US2] Disable Generate button when invalid in `public/app.js`
-- [ ] T024 [US2] Announce errors via aria-live region in `public/app.js`
-- [ ] T025 [P] [US2] Trim and sanitize pasted values before validation in `public/app.js`
+- [x] T020 [US2] Add validation rules (range 2–20, integer) in `public/app.js`
+- [x] T021 [P] [US2] Display inline error message region tied to input in `public/index.html`
+- [x] T022 [P] [US2] Implement live validation on input event in `public/app.js`
+- [x] T023 [US2] Disable Generate button when invalid in `public/app.js`
+- [x] T024 [US2] Announce errors via aria-live region in `public/app.js`
+- [x] T025 [P] [US2] Trim and sanitize pasted values before validation in `public/app.js`
 
 ### Optional Tests
 - [ ] T026 [P] [US2] Validation scenario script (manually invoke validation with test values) in `tests/validation/validate.js`
@@ -85,11 +85,11 @@
 **Independent Test**: Copy places order in clipboard; regenerate produces different permutation.
 
 ### Implementation
-- [ ] T027 [US3] Add Copy button & icon (aria-label) in `public/index.html`
-- [ ] T028 [P] [US3] Implement copy-to-clipboard logic with fallback in `public/app.js`
-- [ ] T029 [US3] Announce copy success via aria-live in `public/app.js`
-- [ ] T030 [P] [US3] Maintain last valid count in memory variable in `public/app.js`
-- [ ] T031 [US3] Ensure Generate button reuses existing valid count value in `public/app.js`
+- [x] T027 [US3] Add Copy button & icon (aria-label) in `public/index.html`
+- [x] T028 [P] [US3] Implement copy-to-clipboard logic with fallback in `public/app.js`
+- [x] T029 [US3] Announce copy success via aria-live in `public/app.js`
+- [x] T030 [P] [US3] Maintain last valid count in memory variable in `public/app.js`
+- [x] T031 [US3] Ensure Generate button reuses existing valid count value in `public/app.js`
 
 ### Optional Tests
 - [ ] T032 [P] [US3] Manual test checklist doc `tests/manual/share-copy.md`
@@ -102,14 +102,14 @@
 
 **Purpose**: Final quality, performance, accessibility refinements.
 
-- [ ] T033 Add keyboard focus management (focus result heading) in `public/app.js`
-- [ ] T034 [P] Add high-contrast theme verification adjustments in `public/styles.css`
-- [ ] T035 [P] Minify CSS & JS (manual simple whitespace removal) optional in `public/` files
-- [ ] T036 Add README usage GIF placeholder in `README.md`
-- [ ] T037 Add license file `LICENSE` (select permissive, e.g., MIT)
+- [x] T033 Add keyboard focus management (focus result heading) in `public/app.js`
+- [x] T034 [P] Add high-contrast theme verification adjustments in `public/styles.css`
+- [x] T035 [P] Minify CSS & JS (manual simple whitespace removal) optional in `public/` files
+- [x] T036 Add README usage GIF placeholder in `README.md`
+- [x] T037 Add license file `LICENSE` (select permissive, e.g., MIT)
 - [ ] T038 [P] Manual mobile viewport verification notes in `tests/manual/mobile.md`
 - [ ] T039 [P] Add accessibility audit notes (axe results) in `tests/accessibility/audit.md`
-- [ ] T040 Final pass: ensure no external network requests (inspect code) in `public/app.js`
+- [x] T040 Final pass: ensure no external network requests (inspect code) in `public/app.js`
 
 ---
 

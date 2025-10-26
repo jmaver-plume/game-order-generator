@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Order Generator</title>
+    <meta name="description" content="Generate random turn order for board games and card games">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <main>
+        <header role="banner">
+            <h1>Game Order Generator</h1>
+            <p class="subtitle">Enter the number of players to generate a random turn order</p>
+        </header>
+
+        <section class="generator" role="main">
+            <div class="input-group">
+                <label for="playerCount">Number of Players</label>
+                <input 
+                    type="number" 
+                    id="playerCount" 
+                    name="playerCount"
+                    min="2" 
+                    max="20" 
+                    placeholder="Enter number of players"
+                    aria-describedby="playerCountHint playerCountError"
+                    required
+                />
+                <p id="playerCountHint" class="hint">Between 2 and 20 players</p>
+                <p id="playerCountError" class="error" role="alert" aria-live="polite"></p>
+            </div>
+
+            <button id="generateBtn" class="btn-primary" type="button">
+                <svg class="icon" aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 3.464V16a1 1 0 102 0v-1.268a2 2 0 000-3.464V4zM11 4a1 1 0 10-2 0v1.268a2 2 0 000 3.464V16a1 1 0 102 0V8.732a2 2 0 000-3.464V4zM16 3a1 1 0 011 1v7.268a2 2 0 010 3.464V16a1 1 0 11-2 0v-1.268a2 2 0 010-3.464V4a1 1 0 011-1z"></path>
+                </svg>
+                Generate Order
+            </button>
+
+            <div id="resultSection" class="result-section hidden" role="region" aria-label="Generated turn order">
+                <h2 id="resultHeading" tabindex="-1">Turn Order</h2>
+                <div id="orderDisplay" class="order-display" aria-live="polite"></div>
+                <button id="copyBtn" class="btn-secondary" type="button" aria-label="Copy turn order to clipboard">
+                    <svg class="icon" aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"></path>
+                        <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z"></path>
+                    </svg>
+                    Copy
+                </button>
+            </div>
+
+            <!-- Accessibility live region for announcements -->
+            <div id="ariaLive" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+        </section>
+
+        <footer role="contentinfo">
+            <p>Perfect for board games, card games, and turn-based activities</p>
+        </footer>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
