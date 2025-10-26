@@ -106,6 +106,8 @@
         markersLayer: null,
         touches: new Map(), // pointerId -> { x, y, el }
         maxTouches: 6,
+        previousCount: 0,
+        rafPending: false,
         init() {
             this.surface = $('#fingerSurface');
             if (!this.surface) return;
@@ -141,13 +143,18 @@
             if (ModeManager.current !== 'finger') return;
             const data = this.touches.get(e.pointerId);
             if (!data) return;
-            // Update position (no batching yet - reserved for T015)
+            // Store latest coordinates; batch update via rAF (T015)
             data.x = e.clientX;
             data.y = e.clientY;
-            this.positionMarker(data.el, data.x, data.y);
+            this.queueMoveBatch();
         },
         addTouch(e) {
-            if (this.touches.size >= this.maxTouches) return; // ignore beyond limit
+            if (this.touches.size >= this.maxTouches) {
+                // Announce max reached (T019) and pulse surface
+                announce('Maximum of ' + this.maxTouches + ' fingers reached');
+                this.pulseMax();
+                return; // ignore beyond limit
+            }
             if (this.touches.has(e.pointerId)) return;
             const marker = this.createMarker();
             const record = { x: e.clientX, y: e.clientY, el: marker };
@@ -186,6 +193,42 @@
             if (!status) return;
             const count = this.touches.size;
             status.textContent = count === 0 ? 'No fingers detected' : `${count} finger${count>1?'s':''} detected`;
+            // Update badge (T018)
+            const badge = $('#fingerCountBadge');
+            if (badge) {
+                badge.textContent = String(count);
+            }
+            // Announcements (T020)
+            if (count !== this.previousCount) {
+                if (this.previousCount === 0 && count > 0) {
+                    announce('First finger detected');
+                } else {
+                    announce(`${count} finger${count>1?'s':''} detected`);
+                }
+                this.previousCount = count;
+            }
+        }
+        ,queueMoveBatch() {
+            if (this.rafPending) return;
+            this.rafPending = true;
+            requestAnimationFrame(() => this.flushMoves());
+        }
+        ,flushMoves() {
+            const rect = this.surface.getBoundingClientRect();
+            for (const record of this.touches.values()) {
+                const relX = record.x - rect.left;
+                const relY = record.y - rect.top;
+                const half = record.el.offsetWidth / 2;
+                record.el.style.transform = `translate(${relX - half}px, ${relY - half}px)`;
+            }
+            this.rafPending = false;
+        }
+        ,pulseMax() {
+            if (!this.surface) return;
+            this.surface.classList.add('finger-max-reached');
+            setTimeout(() => {
+                this.surface.classList.remove('finger-max-reached');
+            }, 450);
         }
     };
 
