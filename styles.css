@@ -438,6 +438,10 @@ button:focus {
     -moz-user-select: none;
     -ms-user-select: none;
     -webkit-touch-callout: none;
+    /* Prevent browser gestures (pinch zoom / back-swipe) inside surface */
+    touch-action: none; /* Disable double-tap & pinch (modern browsers) */
+    -ms-touch-action: none; /* IE/Edge legacy */
+    overscroll-behavior: contain; /* Contain scroll chaining / pull to refresh */
 }
 
 .finger-status {

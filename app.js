@@ -114,13 +114,24 @@
         attachEvents() {
             // Use Pointer Events; fallback minimal listeners if not supported
             ['pointerdown','pointerup','pointercancel'].forEach(evt => {
-                this.surface.addEventListener(evt, (e) => this.handlePointerEvent(e));
+                this.surface.addEventListener(evt, (e) => this.handlePointerEvent(e), { passive: false });
             });
             this.surface.addEventListener('pointermove', (e) => this.handlePointerMove(e));
+
+            // iOS Safari specific gesture events (not standard elsewhere) to suppress pinch
+            ['gesturestart','gesturechange','gestureend'].forEach(evt => {
+                this.surface.addEventListener(evt, (e) => {
+                    e.preventDefault();
+                });
+            });
         },
         handlePointerEvent(e) {
             if (ModeManager.current !== 'finger') return; // Only active in finger mode
             if (e.type === 'pointerdown') {
+                // Prevent default to block implicit multi-touch gestures (Safari zoom/tab switch)
+                if (e.cancelable) {
+                    e.preventDefault();
+                }
                 this.addTouch(e);
             } else if (e.type === 'pointerup' || e.type === 'pointercancel') {
                 this.removeTouch(e.pointerId);

@@ -121,6 +121,7 @@
 - [ ] T048 Update README usage section with finger mode instructions (root `README.md`)
 - [ ] T049 [P] Add manual fairness & accessibility notes file `tests/accessibility/finger-mode.md`
 - [ ] T050 Sign-off checklist: verify FR-001–FR-015 & SC-001–SC-008 (create verification notes `specs/002-finger-selection/checklists/verification.md`)
+- [ ] T051 [P] Prevent iOS Safari pinch/back gestures in finger surface (CSS touch-action:none + gesture event preventDefault) `styles.css` / `app.js`
 
 ---
 ## Dependencies & Execution Order
