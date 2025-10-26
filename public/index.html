@@ -9,25 +9,39 @@
 </head>
 <body>
     <main>
+        <!-- App Icon -->
+        <div class="app-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+        </div>
+
         <header role="banner">
-            <h1>Game Order Generator</h1>
-            <p class="subtitle">Enter the number of players to generate a random turn order</p>
+            <h1>Board Game Order</h1>
+            <p class="subtitle">Generate random player order</p>
         </header>
 
         <section class="generator" role="main">
             <div class="input-group">
                 <label for="playerCount">Number of Players</label>
-                <input 
-                    type="number" 
-                    id="playerCount" 
-                    name="playerCount"
-                    min="2" 
-                    max="20" 
-                    placeholder="Enter number of players"
-                    aria-describedby="playerCountHint playerCountError"
-                    required
-                />
-                <p id="playerCountHint" class="hint">Between 2 and 20 players</p>
+                <div class="input-wrapper">
+                    <input 
+                        type="number" 
+                        id="playerCount" 
+                        name="playerCount"
+                        min="2" 
+                        max="20" 
+                        placeholder="Enter number"
+                        aria-describedby="playerCountHint playerCountError"
+                        required
+                    />
+                    <span class="input-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                        </svg>
+                    </span>
+                </div>
+                <p id="playerCountHint" class="hint sr-only">Between 2 and 20 players</p>
                 <p id="playerCountError" class="error" role="alert" aria-live="polite"></p>
             </div>
 
@@ -53,6 +67,19 @@
             <!-- Accessibility live region for announcements -->
             <div id="ariaLive" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
         </section>
+
+        <!-- Info Box -->
+        <div class="info-box">
+            <div class="info-header">
+                <div class="info-icon">i</div>
+                <div class="info-title">How it works</div>
+            </div>
+            <ul class="info-list">
+                <li>Enter number of players (2-20)</li>
+                <li>Click generate to get random order</li>
+                <li>Player 1 goes first, then 2, 3, etc.</li>
+            </ul>
+        </div>
 
         <footer role="contentinfo">
             <p>Perfect for board games, card games, and turn-based activities</p>
