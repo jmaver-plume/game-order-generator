@@ -55,23 +55,16 @@
                 generateBtn: $('#generateBtn'),
                 errorMsg: $('#playerCountError'),
                 resultSection: $('#resultSection'),
-                resultHeading: $('#resultHeading'),
-                orderDisplay: $('#orderDisplay'),
-                copyBtn: $('#copyBtn')
+                orderDisplay: $('#orderDisplay')
             };
         },
 
         attachEventListeners() {
-            const { input, generateBtn, copyBtn } = this.elements;
+            const { input, generateBtn } = this.elements;
 
             // Generate button click
             if (generateBtn) {
                 generateBtn.addEventListener('click', () => this.handleGenerate());
-            }
-
-            // Copy button click
-            if (copyBtn) {
-                copyBtn.addEventListener('click', () => this.handleCopy());
             }
 
             // Enter key in input field
@@ -197,15 +190,12 @@
 
         // Display the generated order
         displayOrder(order) {
-            const { resultSection, resultHeading, orderDisplay } = this.elements;
+            const { resultSection, orderDisplay } = this.elements;
             
             if (!resultSection || !orderDisplay) return;
 
             // Format order as comma-separated string
             const orderString = order.join(', ');
-            
-            // Store current order for copying
-            this.currentOrder = orderString;
             
             // Update display
             orderDisplay.textContent = orderString;
@@ -213,40 +203,6 @@
             
             // Announce to screen readers
             announce(`Turn order generated: ${orderString}`);
-            
-            // Focus result heading for keyboard users and screen readers
-            setTimeout(() => {
-                if (resultHeading) {
-                    resultHeading.focus();
-                }
-            }, 100);
-        },
-
-        // Handle copy to clipboard
-        async handleCopy() {
-            if (!this.currentOrder) return;
-
-            try {
-                // Try modern Clipboard API first
-                if (navigator.clipboard && navigator.clipboard.writeText) {
-                    await navigator.clipboard.writeText(this.currentOrder);
-                    announce('Order copied to clipboard');
-                } else {
-                    // Fallback for older browsers
-                    const textarea = document.createElement('textarea');
-                    textarea.value = this.currentOrder;
-                    textarea.style.position = 'fixed';
-                    textarea.style.opacity = '0';
-                    document.body.appendChild(textarea);
-                    textarea.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(textarea);
-                    announce('Order copied to clipboard');
-                }
-            } catch (err) {
-                console.error('Failed to copy:', err);
-                announce('Failed to copy. Please try manually selecting the text.');
-            }
         }
     };
 

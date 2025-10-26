@@ -9,13 +9,6 @@
 </head>
 <body>
     <main>
-        <!-- App Icon -->
-        <div class="app-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-        </div>
-
         <header role="banner">
             <h1>Board Game Order</h1>
             <p class="subtitle">Generate random player order</p>
@@ -53,15 +46,7 @@
             </button>
 
             <div id="resultSection" class="result-section hidden" role="region" aria-label="Generated turn order">
-                <h2 id="resultHeading" tabindex="-1">Turn Order</h2>
                 <div id="orderDisplay" class="order-display" aria-live="polite"></div>
-                <button id="copyBtn" class="btn-secondary" type="button" aria-label="Copy turn order to clipboard">
-                    <svg class="icon" aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-                        <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"></path>
-                        <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z"></path>
-                    </svg>
-                    Copy
-                </button>
             </div>
 
             <!-- Accessibility live region for announcements -->
