@@ -206,21 +206,11 @@
             el.style.transform = `translate(${relX - half}px, ${relY - half}px)`;
         },
         updateStatus() {
-            const status = $('#fingerStatus');
-            if (!status) return;
             const count = this.touches.size;
-            if (ModeManager.selectionActive) {
-                status.textContent = 'Winner selected';
-            } else {
-                status.textContent = count === 0 ? 'No fingers detected' : `${count} finger${count>1?'s':''} detected`;
-            }
-            // Update badge (T018)
             const badge = $('#fingerCountBadge');
-            if (badge) {
-                badge.textContent = String(count);
-            }
             // Announcements (T020)
-            if (count !== this.previousCount) {
+            if (badge) badge.textContent = String(count);
+            if (count !== this.previousCount && !ModeManager.selectionActive) {
                 if (this.previousCount === 0 && count > 0) {
                     announce('First finger detected');
                 } else {
@@ -228,7 +218,6 @@
                 }
                 this.previousCount = count;
             }
-            // Auto-select scheduling (T052)
             this.scheduleAutoSelection();
         }
         ,queueMoveBatch() {

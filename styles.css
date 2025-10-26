@@ -441,7 +441,8 @@ button:focus {
 .finger-mode[data-mode-panel] {
     background: var(--color-bg);
     border-radius: 24px;
-    padding: var(--spacing-2xl);
+    padding: 0px;
+    margin: 0px;
     box-shadow: 0 4px 24px rgba(0,0,0,0.06);
     width: 100%;
     margin-bottom: var(--spacing-xl);
@@ -451,11 +452,10 @@ button:focus {
 .finger-surface {
     position: relative;
     width: 100%;
-    height: 280px;
+    height: 60dvh;
     border: 2px dashed var(--color-border);
     border-radius: 20px;
     background: var(--color-bg-secondary);
-    margin-top: var(--spacing-md);
     user-select: none;
     -webkit-user-select: none;
     -moz-user-select: none;
