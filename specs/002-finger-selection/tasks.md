@@ -13,11 +13,11 @@
 ## Phase 1: Setup (Shared Infrastructure)
 **Purpose**: Prepare existing static app for dual mode; no functionality yet.
 
-- [ ] T001 Add mode toggle container markup placeholder to `index.html` (above existing generator section)
-- [ ] T002 Add finger selection section placeholder (hidden by default) in `index.html`
-- [ ] T003 Create structural CSS classes for `.mode-toggle`, `.finger-mode`, `.numeric-mode` in `styles.css`
-- [ ] T004 Add ARIA live region reuse note (no change) comment in `index.html`
-- [ ] T005 Update README with dual-mode overview (root `README.md`)
+- [x] T001 Add mode toggle container markup placeholder to `index.html` (above existing generator section)
+- [x] T002 Add finger selection section placeholder (hidden by default) in `index.html`
+- [x] T003 Create structural CSS classes for `.mode-toggle`, `.finger-mode`, `.numeric-mode` in `styles.css`
+- [x] T004 Add ARIA live region reuse note (no change) comment in `index.html`
+- [x] T005 Update README with dual-mode overview (root `README.md`)
 
 ---
 ## Phase 2: Foundational (Blocking Prerequisites)

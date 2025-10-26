@@ -14,7 +14,14 @@
             <p class="subtitle">Generate random player order</p>
         </header>
 
-        <section class="generator" role="main">
+        <!-- Mode toggle container (T001) -->
+        <section class="mode-toggle" role="group" aria-label="Mode selection">
+            <button type="button" class="toggle-btn" data-mode="numeric" aria-pressed="true">Player Count</button>
+            <button type="button" class="toggle-btn" data-mode="finger" aria-pressed="false">Finger Pick</button>
+        </section>
+
+        <!-- Numeric mode container (existing generator) (T003 structural class) -->
+        <section class="generator numeric-mode" role="main" data-mode-panel="numeric">
             <div class="input-group">
                 <label for="playerCount">Number of Players</label>
                 <div class="input-wrapper">
@@ -50,8 +57,17 @@
             </div>
 
             <!-- Accessibility live region for announcements -->
+            <!-- ARIA live region reused for winner + mode announcements (T004) -->
             <div id="ariaLive" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
         </section>        
+
+        <!-- Finger selection placeholder section (hidden initially) (T002) -->
+        <section class="finger-mode hidden" role="region" aria-label="Finger selection mode" data-mode-panel="finger">
+            <h2 class="sr-only">Finger Selection</h2>
+            <p class="instructions">Place up to 6 fingers on the screen. When ready, switch later phases will allow selecting a random finger.</p>
+            <div class="finger-surface" id="fingerSurface" aria-label="Touch capture area" role="application"></div>
+            <div class="finger-status" aria-live="polite" id="fingerStatus">No fingers detected</div>
+        </section>
     </main>
 
     <script src="app.js"></script>

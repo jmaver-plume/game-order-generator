@@ -13,6 +13,7 @@ A simple, accessible static web application to generate random turn order for bo
 ## Features
 
 - 🎲 Random turn order generation using Fisher-Yates shuffle
+	- (Upcoming) Multi-touch finger selection mode to pick starting player
 - ♿ WCAG 2.1 AA accessible
 - 📱 Fully responsive (mobile-first design)
 - ⚡ Fast and lightweight (< 500KB total)
@@ -35,12 +36,21 @@ A simple, accessible static web application to generate random turn order for bo
 
 ## Usage
 
-Enter a number between 2 and 20 representing the number of players. The application will:
+By default you are in Player Count mode: enter a number between 2 and 20 representing the number of players. The application will:
 
 1. Validate your input in real-time
 2. Generate a random permutation of numbers 1 through N
 3. Display the turn order
 4. Allow you to copy the order or generate a new one
+
+### Dual Mode (In Progress)
+
+Use the mode toggle at the top to switch between:
+
+- Player Count: Enter total players and generate a full turn order.
+- Finger Pick: (Experimental) Place up to 6 fingers on a touch screen; a later phase will allow randomly selecting one finger as the starting player.
+
+Current state: structural placeholders present for Finger Pick; selection & animation logic will arrive in subsequent iterations.
 
 ## Development
 
