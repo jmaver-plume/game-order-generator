@@ -38,6 +38,68 @@
         }
     }
 
+    // Mode Manager (Phase2 T006-T010): manages numeric vs finger panel visibility & guards during selection
+    const ModeManager = {
+        current: 'numeric',
+        selectionActive: false, // will be toggled later during selection phases
+        els: {},
+        init() {
+            this.els.toggleButtons = $$('.mode-toggle .toggle-btn');
+            this.els.panels = {
+                numeric: document.querySelector('[data-mode-panel="numeric"]'),
+                finger: document.querySelector('[data-mode-panel="finger"]')
+            };
+            this.attachEvents();
+            this.applyMode('numeric', { announce: false });
+        },
+        attachEvents() {
+            if (this.els.toggleButtons) {
+                this.els.toggleButtons.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const targetMode = btn.getAttribute('data-mode');
+                        this.requestModeChange(targetMode);
+                    });
+                });
+            }
+        },
+        requestModeChange(mode) {
+            if (mode === this.current) return;
+            if (this.selectionActive) {
+                // Guard mode switch mid-selection (spec FR-015 placeholder)
+                announce('Cannot switch modes during selection');
+                return;
+            }
+            this.applyMode(mode, { announce: true });
+        },
+        applyMode(mode, { announce: doAnnounce } = { announce: true }) {
+            this.current = mode;
+            // Update button pressed states
+            if (this.els.toggleButtons) {
+                this.els.toggleButtons.forEach(btn => {
+                    const m = btn.getAttribute('data-mode');
+                    btn.setAttribute('aria-pressed', m === mode ? 'true' : 'false');
+                });
+            }
+            // Toggle panels
+            Object.entries(this.els.panels).forEach(([key, panel]) => {
+                if (!panel) return;
+                if (key === mode) {
+                    panel.classList.remove('hidden', 'mode-panel-hidden');
+                    panel.classList.add('mode-panel-active');
+                } else {
+                    panel.classList.add('hidden', 'mode-panel-hidden');
+                    panel.classList.remove('mode-panel-active');
+                }
+            });
+            if (doAnnounce) {
+                announce(mode === 'numeric' ? 'Switched to Player Count mode' : 'Switched to Finger Pick mode');
+            }
+        },
+        setSelectionActive(active) {
+            this.selectionActive = !!active;
+        }
+    };
+
     // Main module
     const GameOrderGenerator = {
         elements: {},
@@ -46,6 +108,8 @@
         init() {
             this.cacheElements();
             this.attachEventListeners();
+            // Initialize mode manager after basic elements present
+            ModeManager.init();
             console.log('Game Order Generator initialized');
         },
 
@@ -216,6 +280,8 @@
     // Expose for optional testing
     window.GameOrderGenerator = {
         fisherYatesShuffle,
-        generateTurnOrder
+        generateTurnOrder,
+        setSelectionActive: (active) => ModeManager.setSelectionActive(active),
+        getCurrentMode: () => ModeManager.current
     };
 })();

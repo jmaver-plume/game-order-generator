@@ -440,3 +440,14 @@ button:focus {
     font-size: var(--font-size-sm);
     color: var(--color-text-muted);
 }
+
+/* Mode panel transition utilities (T008) */
+.mode-panel-hidden { display: none !important; }
+.mode-panel-active { display: block; }
+
+@keyframes modeFadeIn {
+    from { opacity: 0; transform: scale(0.98); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.mode-panel-active { animation: modeFadeIn 0.18s ease-out; }

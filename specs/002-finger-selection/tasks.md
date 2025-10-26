@@ -29,6 +29,11 @@
 - [ ] T008 [P] Add CSS utility classes for hidden/visible mode transitions in `styles.css`
 - [ ] T009 Guard mode switch during selection (state flag placeholder) in `app.js`
 - [ ] T010 Instrument announce() for mode change messaging in `app.js`
+- [x] T006 Initialize mode state object & export minimal API in `app.js`
+- [x] T007 Implement mode toggle event handling (numeric ↔ finger) in `app.js`
+- [x] T008 [P] Add CSS utility classes for hidden/visible mode transitions in `styles.css`
+- [x] T009 Guard mode switch during selection (state flag placeholder) in `app.js`
+- [x] T010 Instrument announce() for mode change messaging in `app.js`
 
 **Checkpoint**: Mode switching skeleton works (no finger logic yet); numeric mode unaffected.
 
