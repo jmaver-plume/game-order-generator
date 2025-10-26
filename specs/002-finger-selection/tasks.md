@@ -97,11 +97,11 @@
 **Independent Test**: After selection → press Reset → markers cleared; selection allowed again; toggle enabled.
 
 ### Implementation
-- [ ] T034 [US4] Add Reset button to finger mode section in `index.html`
-- [ ] T035 [US4] Implement reset logic (clear markers, state flags) in `app.js`
-- [ ] T036 [US4] Re-enable Select button and mode toggle post-reset in `app.js`
-- [ ] T037 [US4] Focus management: move focus to Select button after reset in `app.js`
-- [ ] T038 [P] [US4] Announce reset completion via live region in `app.js`
+- [x] T034 [US4] Add Reset button to finger mode section in `index.html`
+- [x] T035 [US4] Implement reset logic (clear markers, state flags) in `app.js`
+- [x] T036 [US4] Re-enable selection acceptance & mode toggle post-reset in `app.js`
+- [x] T037 [US4] Focus management: move focus to capture surface after reset in `app.js`
+- [x] T038 [P] [US4] Announce reset completion via live region in `app.js`
 
 **Checkpoint**: Replay flow functional; independent demonstration possible with prior stories stubbed.
 

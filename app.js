@@ -105,7 +105,7 @@
         surface: null,
         markersLayer: null,
         touches: new Map(), // pointerId -> { x, y, el }
-        maxTouches: 6,
+        maxTouches: (navigator.maxTouchPoints && navigator.maxTouchPoints < 6) ? navigator.maxTouchPoints : 6,
         previousCount: 0,
         rafPending: false,
         autoSelectTimer: null,
@@ -113,7 +113,11 @@
         init() {
             this.surface = $('#fingerSurface');
             if (!this.surface) return;
+            this.resetBtn = $('#fingerResetBtn');
             this.attachEvents();
+            if (this.resetBtn) {
+                this.resetBtn.addEventListener('click', () => this.handleResetClick());
+            }
         },
         attachEvents() {
             // Use Pointer Events; fallback minimal listeners if not supported
@@ -263,6 +267,33 @@
             }
             this.updateStatus();
             return winner;
+        }
+        ,handleResetClick() {
+            this.resetState();
+        }
+        ,resetState() {
+            // Clear timers
+            if (this.autoSelectTimer) {
+                clearTimeout(this.autoSelectTimer);
+                this.autoSelectTimer = null;
+            }
+            // Remove all markers
+            for (const record of this.touches.values()) {
+                record.el.remove();
+            }
+            this.touches.clear();
+            this.winnerEl = null;
+            ModeManager.setSelectionActive(false);
+            this.previousCount = 0;
+            // Update badge
+            const badge = $('#fingerCountBadge');
+            if (badge) badge.textContent = '0';
+            // Announce reset completion
+            announce('Reset complete, place fingers');
+            // Focus capture surface (T037)
+            if (this.surface) {
+                this.surface.focus && this.surface.focus();
+            }
         }
         ,scheduleAutoSelection() {
             // Clear existing timer
