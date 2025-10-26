@@ -433,12 +433,22 @@ button:focus {
     border-radius: 20px;
     background: var(--color-bg-secondary);
     margin-top: var(--spacing-md);
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-touch-callout: none;
 }
 
 .finger-status {
     margin-top: var(--spacing-md);
     font-size: var(--font-size-sm);
     color: var(--color-text-muted);
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-touch-callout: none;
 }
 
 /* Finger marker base style (US1 T012-T013 basic) - fuller styling in T016 */
