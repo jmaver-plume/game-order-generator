@@ -11,7 +11,6 @@
     <main>
         <header role="banner">
             <h1>Board Game Order</h1>
-            <p class="subtitle">Generate random player order</p>
         </header>
 
         <!-- Mode toggle container (T001) -->
@@ -61,11 +60,11 @@
             <div id="ariaLive" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
         </section>        
 
-        <!-- Finger selection panel acts as full capture surface (T058) -->
-        <section class="finger-mode hidden" id="fingerSurface" role="application" aria-label="Finger selection surface" data-mode-panel="finger">
-            <div class="finger-count-badge" id="fingerCountBadge" aria-hidden="true">0</div>
-            <button type="button" class="finger-reset-btn" id="fingerResetBtn" aria-label="Reset finger selection" title="Reset">Reset</button>
+        <!-- Finger selection mode (surface + reset button below) -->
+        <section class="finger-mode hidden" role="region" aria-label="Finger selection mode" data-mode-panel="finger">
+            <div class="finger-surface" id="fingerSurface" aria-label="Touch capture area" role="application" tabindex="0"></div>
         </section>
+        <button type="button" class="finger-reset-btn" id="fingerResetBtn" aria-label="Reset finger selection" title="Reset">Reset</button>
     </main>
 
     <script src="app.js"></script>

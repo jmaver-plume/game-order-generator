@@ -211,9 +211,6 @@
         },
         updateStatus() {
             const count = this.touches.size;
-            const badge = $('#fingerCountBadge');
-            // Announcements (T020)
-            if (badge) badge.textContent = String(count);
             if (count !== this.previousCount && !ModeManager.selectionActive) {
                 if (this.previousCount === 0 && count > 0) {
                     announce('First finger detected');
@@ -272,27 +269,23 @@
             this.resetState();
         }
         ,resetState() {
-            // Clear timers
             if (this.autoSelectTimer) {
                 clearTimeout(this.autoSelectTimer);
                 this.autoSelectTimer = null;
             }
-            // Remove all markers
             for (const record of this.touches.values()) {
                 record.el.remove();
             }
             this.touches.clear();
+            if (this.winnerEl) {
+                this.winnerEl.remove();
+            }
             this.winnerEl = null;
             ModeManager.setSelectionActive(false);
             this.previousCount = 0;
-            // Update badge
-            const badge = $('#fingerCountBadge');
-            if (badge) badge.textContent = '0';
-            // Announce reset completion
             announce('Reset complete, place fingers');
-            // Focus capture surface (T037)
-            if (this.surface) {
-                this.surface.focus && this.surface.focus();
+            if (this.surface && this.surface.focus) {
+                this.surface.focus();
             }
         }
         ,scheduleAutoSelection() {
