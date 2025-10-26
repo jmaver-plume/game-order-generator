@@ -444,20 +444,35 @@ button:focus {
 /* Finger marker base style (US1 T012-T013 basic) - fuller styling in T016 */
 .finger-marker {
     position: absolute;
-    width: 48px;
-    height: 48px;
+    width: 80px; /* Enlarged for better visibility under finger */
+    height: 80px;
     background: var(--color-primary);
     color: #fff;
     font-weight: 700;
-    font-size: var(--font-size-lg);
+    font-size: 1.75rem;
+    line-height: 1;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.30);
     pointer-events: none;
     user-select: none;
-    transition: transform 0.08s ease-out;
+    transition: transform 0.08s ease-out, background-color 0.2s;
+    border: 3px solid rgba(255,255,255,0.6);
+}
+
+/* Distinct color palette per finger (max 6) */
+.finger-color-1 { background:#2563eb; }
+.finger-color-2 { background:#10b981; }
+.finger-color-3 { background:#f59e0b; }
+.finger-color-4 { background:#ef4444; }
+.finger-color-5 { background:#8b5cf6; }
+.finger-color-6 { background:#ec4899; }
+
+/* High contrast adjustments */
+@media (prefers-contrast: high) {
+    .finger-marker { border-color:#000; }
 }
 
 /* Mode panel transition utilities (T008) */

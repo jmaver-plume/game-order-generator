@@ -52,6 +52,7 @@
 - [ ] T014 [P] [US1] Maintain active touches map (pointerId → metadata) in `app.js`
 - [ ] T015 [P] [US1] Implement pointer move batching (requestAnimationFrame) for position updates in `app.js`
 - [ ] T016 [US1] Add marker base styles (size, color) in `styles.css`
+- [x] T016 [US1] Add marker base styles (size, color) in `styles.css`
 - [ ] T017 [US1] Add numeric label inside marker (index assignment) in `app.js`
 - [ ] T018 [US1] Display active finger count UI element in `index.html`
 - [ ] T019 [US1] Enforce max 6 touches (ignore additional) in `app.js`

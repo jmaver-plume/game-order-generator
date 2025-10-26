@@ -153,8 +153,9 @@
         },
         createMarker() {
             const el = document.createElement('div');
-            el.className = 'finger-marker';
-            el.textContent = String(this.touches.size + 1); // provisional label
+            const index = this.touches.size + 1;
+            el.className = 'finger-marker finger-color-' + index;
+            el.textContent = String(index); // visible label
             this.surface.appendChild(el);
             return el;
         },
@@ -163,7 +164,9 @@
             const rect = this.surface.getBoundingClientRect();
             const relX = x - rect.left;
             const relY = y - rect.top;
-            el.style.transform = `translate(${relX - 24}px, ${relY - 24}px)`; // center offset
+            // Center offset uses half of element dimensions (now 80px)
+            const half = el.offsetWidth / 2;
+            el.style.transform = `translate(${relX - half}px, ${relY - half}px)`;
         },
         updateStatus() {
             const status = $('#fingerStatus');
