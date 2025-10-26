@@ -128,6 +128,8 @@
  - [x] T053 Persist winner marker & remove others immediately on selection in `app.js`
  - [x] T054 Remove manual Select button (auto mode only) in `index.html` / cleanup in `app.js`
  - [x] T055 Ignore new touches after selection; keep winner visible even when lifted in `app.js`
+ - [x] T056 Enlarge active finger markers to 120px, revert winner to base size in `styles.css` / `app.js`
+ - [x] T057 Remove distinct winner highlight; winner retains active styling in `styles.css` / `app.js`
 
 ---
 ## Dependencies & Execution Order

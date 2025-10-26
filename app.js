@@ -192,6 +192,8 @@
             // Provide accessible name so screen readers can announce finger changes.
             el.setAttribute('aria-label', 'Finger ' + index);
             this.surface.appendChild(el);
+            // Apply active size state (T056)
+            el.classList.add('finger-active');
             return el;
         },
         positionMarker(el, x, y) {
@@ -259,7 +261,7 @@
             }
             const idx = secureRandomIndex(records.length);
             const winner = records[idx];
-            winner.el.classList.add('finger-winner');
+            // Keep winner styling identical to active markers; no special class.
             announce('Random finger selected');
             ModeManager.setSelectionActive(true); // lock mode switching (FR-015)
             this.winnerEl = winner.el;
