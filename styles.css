@@ -441,6 +441,25 @@ button:focus {
     color: var(--color-text-muted);
 }
 
+/* Finger marker base style (US1 T012-T013 basic) - fuller styling in T016 */
+.finger-marker {
+    position: absolute;
+    width: 48px;
+    height: 48px;
+    background: var(--color-primary);
+    color: #fff;
+    font-weight: 700;
+    font-size: var(--font-size-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    pointer-events: none;
+    user-select: none;
+    transition: transform 0.08s ease-out;
+}
+
 /* Mode panel transition utilities (T008) */
 .mode-panel-hidden { display: none !important; }
 .mode-panel-active { display: block; }

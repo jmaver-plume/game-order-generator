@@ -46,6 +46,9 @@
 - [ ] T011 [US1] Add finger capture surface container (absolute layer) to `index.html`
 - [ ] T012 [US1] Implement pointer down handler → create marker element in `app.js`
 - [ ] T013 [US1] Implement pointer up/cancel handler → remove marker element in `app.js`
+- [x] T011 [US1] Add finger capture surface container (absolute layer) to `index.html`
+- [x] T012 [US1] Implement pointer down handler → create marker element in `app.js`
+- [x] T013 [US1] Implement pointer up/cancel handler → remove marker element in `app.js`
 - [ ] T014 [P] [US1] Maintain active touches map (pointerId → metadata) in `app.js`
 - [ ] T015 [P] [US1] Implement pointer move batching (requestAnimationFrame) for position updates in `app.js`
 - [ ] T016 [US1] Add marker base styles (size, color) in `styles.css`

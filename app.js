@@ -100,6 +100,79 @@
         }
     };
 
+    // Touch/Finger Manager (US1 T011-T013 baseline)
+    const FingerManager = {
+        surface: null,
+        markersLayer: null,
+        touches: new Map(), // pointerId -> { x, y, el }
+        maxTouches: 6,
+        init() {
+            this.surface = $('#fingerSurface');
+            if (!this.surface) return;
+            this.attachEvents();
+        },
+        attachEvents() {
+            // Use Pointer Events; fallback minimal listeners if not supported
+            ['pointerdown','pointerup','pointercancel'].forEach(evt => {
+                this.surface.addEventListener(evt, (e) => this.handlePointerEvent(e));
+            });
+            this.surface.addEventListener('pointermove', (e) => this.handlePointerMove(e));
+        },
+        handlePointerEvent(e) {
+            if (ModeManager.current !== 'finger') return; // Only active in finger mode
+            if (e.type === 'pointerdown') {
+                this.addTouch(e);
+            } else if (e.type === 'pointerup' || e.type === 'pointercancel') {
+                this.removeTouch(e.pointerId);
+            }
+        },
+        handlePointerMove(e) {
+            if (ModeManager.current !== 'finger') return;
+            const data = this.touches.get(e.pointerId);
+            if (!data) return;
+            // Update position (no batching yet - reserved for T015)
+            data.x = e.clientX;
+            data.y = e.clientY;
+            this.positionMarker(data.el, data.x, data.y);
+        },
+        addTouch(e) {
+            if (this.touches.size >= this.maxTouches) return; // ignore beyond limit
+            if (this.touches.has(e.pointerId)) return;
+            const marker = this.createMarker();
+            const record = { x: e.clientX, y: e.clientY, el: marker };
+            this.touches.set(e.pointerId, record);
+            this.positionMarker(marker, record.x, record.y);
+            this.updateStatus();
+        },
+        removeTouch(pointerId) {
+            const data = this.touches.get(pointerId);
+            if (!data) return;
+            data.el.remove();
+            this.touches.delete(pointerId);
+            this.updateStatus();
+        },
+        createMarker() {
+            const el = document.createElement('div');
+            el.className = 'finger-marker';
+            el.textContent = String(this.touches.size + 1); // provisional label
+            this.surface.appendChild(el);
+            return el;
+        },
+        positionMarker(el, x, y) {
+            // Position relative to surface bounding rect
+            const rect = this.surface.getBoundingClientRect();
+            const relX = x - rect.left;
+            const relY = y - rect.top;
+            el.style.transform = `translate(${relX - 24}px, ${relY - 24}px)`; // center offset
+        },
+        updateStatus() {
+            const status = $('#fingerStatus');
+            if (!status) return;
+            const count = this.touches.size;
+            status.textContent = count === 0 ? 'No fingers detected' : `${count} finger${count>1?'s':''} detected`;
+        }
+    };
+
     // Main module
     const GameOrderGenerator = {
         elements: {},
@@ -110,6 +183,8 @@
             this.attachEventListeners();
             // Initialize mode manager after basic elements present
             ModeManager.init();
+            // Initialize finger manager (safe even if panel hidden) T011
+            FingerManager.init();
             console.log('Game Order Generator initialized');
         },
 
@@ -282,6 +357,7 @@
         fisherYatesShuffle,
         generateTurnOrder,
         setSelectionActive: (active) => ModeManager.setSelectionActive(active),
-        getCurrentMode: () => ModeManager.current
+        getCurrentMode: () => ModeManager.current,
+        _fingerDebug: () => ({ size: FingerManager.touches.size }) // debug helper (optional)
     };
 })();
