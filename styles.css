@@ -255,6 +255,20 @@ input[type="number"]:invalid:not(:placeholder-shown) {
     border-top: 2px solid var(--color-border);
 }
 
+.order-display {
+    background: var(--color-bg-secondary);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-lg);
+    font-size: var(--font-size-xl);
+    font-weight: 600;
+    color: var(--color-text);
+    text-align: center;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 /* Info box */
 .info-box {
     background: var(--color-info-bg);
