@@ -82,6 +82,7 @@ After a winner is selected, users want to easily reset the screen and start a ne
 - What happens if device doesn't support multi-touch (e.g., desktop with mouse)?
 - What is the maximum number of simultaneous touches the app should support?
 - How does the app handle rapid finger placement/removal (touch jitter)?
+- What happens if user switches modes during an active selection animation?
 
 ## Requirements *(mandatory)*
 
@@ -100,6 +101,8 @@ After a winner is selected, users want to easily reset the screen and start a ne
 - **FR-011**: System MUST allow users to reset the selection and start a new round
 - **FR-012**: System MUST prevent selection when fewer than 2 touches are active
 - **FR-013**: System MUST maintain touch point markers at fixed positions even if finger slides slightly during contact
+- **FR-014**: System MUST provide a clear UI control (toggle/button) to switch between numeric entry turn-order mode and multi-touch finger selection mode without page reload
+- **FR-015**: System MUST preserve mode state during a selection round and disallow switching mid-selection (requires reset before mode change)
 
 ### Key Entities
 
@@ -124,6 +127,7 @@ After a winner is selected, users want to easily reset the screen and start a ne
 - Persisting historical selection rounds.
 - Identifying individual players beyond finger presence.
 - Handling more than 6 simultaneous touches.
+- Automated syncing of mode preference across different devices or sessions.
 
 ## Success Criteria *(mandatory)*
 
@@ -136,3 +140,4 @@ After a winner is selected, users want to easily reset the screen and start a ne
 - **SC-005**: Random selection demonstrates statistical fairness across 100 trials (each position selected between 5-15 times for 10 positions, chi-square test p>0.05)
 - **SC-006**: 90% of users successfully complete their first selection without assistance or confusion
 - **SC-007**: App remains responsive and performs selection within time limits across different device types (mobile phones, tablets)
+- **SC-008**: Users can switch between modes (numeric vs finger) in under 2 seconds and 90% of users correctly identify current mode without assistance

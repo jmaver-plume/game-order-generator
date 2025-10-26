@@ -32,3 +32,5 @@
 ## Notes
 
 All checklist items validated as complete on 2025-10-26. Ready for next phase (`/speckit.plan`).
+
+Additional integration requirement (cross-feature): App must support BOTH existing numeric turn-order input flow (user enters number of players, system returns randomized order) AND new multi-touch finger selection. A clear toggle (button or switch) must allow users to switch modes without page reload. Default mode assumption: numeric input flow; users can opt into finger selection. Spec updated with FR-014, FR-015, new user story, and success criterion SC-008 to reflect this.
