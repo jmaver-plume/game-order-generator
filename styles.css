@@ -512,6 +512,16 @@ button:focus {
 .finger-color-5 { background:#8b5cf6; }
 .finger-color-6 { background:#ec4899; }
 
+/* Winner highlight (US2 T024) */
+.finger-marker.finger-winner {
+    box-shadow: 0 0 0 4px #fff, 0 0 0 10px rgba(124,58,237,0.55), 0 8px 24px rgba(0,0,0,0.45);
+    transform: scale(1.08);
+    border-color: #fff;
+}
+@media (prefers-reduced-motion: reduce) {
+    .finger-marker.finger-winner { transform: none; }
+}
+
 /* High contrast adjustments */
 @media (prefers-contrast: high) {
     .finger-marker { border-color:#000; }

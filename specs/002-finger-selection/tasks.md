@@ -66,13 +66,13 @@
 **Independent Test**: With ≥2 active markers press Select; one winner highlighted; fairness observable over repeated runs.
 
 ### Implementation
-- [ ] T021 [US2] Add Select button (disabled <2 touches) to finger section in `index.html`
-- [ ] T022 [US2] Implement secure random winner pick using `crypto.getRandomValues` in `app.js`
-- [ ] T023 [P] [US2] Fallback to `Math.random` with console warning if crypto unavailable in `app.js`
-- [ ] T024 [US2] Highlight winner marker (distinct CSS class) in `styles.css`
-- [ ] T025 [US2] Announce winner via live region in `app.js`
-- [ ] T026 [US2] Lock selection state (prevent re-select) until reset in `app.js`
-- [ ] T027 [P] [US2] Console fairness sampler (30 selections distribution) function in `app.js`
+- [x] T021 [US2] Add Select button (disabled <2 touches) to finger section in `index.html`
+- [x] T022 [US2] Implement secure random winner pick using `crypto.getRandomValues` in `app.js`
+- [x] T023 [P] [US2] Fallback to `Math.random` with console warning if crypto unavailable in `app.js`
+- [x] T024 [US2] Highlight winner marker (distinct CSS class) in `styles.css`
+- [x] T025 [US2] Announce winner via live region in `app.js`
+- [x] T026 [US2] Lock selection state (prevent re-select) until reset in `app.js`
+- [x] T027 [P] [US2] Console fairness sampler (30 selections distribution) function in `app.js`
 
 **Checkpoint**: Random selection demo complete; combined with US1 forms full MVP.
 

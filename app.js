@@ -169,6 +169,12 @@
             this.touches.delete(pointerId);
             this.updateStatus();
         },
+        getActiveMarkers() {
+            return Array.from(this.touches.values()).map(r => r.el);
+        },
+        getActiveRecords() {
+            return Array.from(this.touches.values());
+        },
         createMarker() {
             const el = document.createElement('div');
             const index = this.touches.size + 1;
@@ -207,6 +213,11 @@
                 }
                 this.previousCount = count;
             }
+            // Enable/disable select button (US2 T021 logic hook)
+            const selectBtn = $('#fingerSelectBtn');
+            if (selectBtn) {
+                selectBtn.disabled = count < 2 || ModeManager.selectionActive;
+            }
         }
         ,queueMoveBatch() {
             if (this.rafPending) return;
@@ -230,6 +241,32 @@
                 this.surface.classList.remove('finger-max-reached');
             }, 450);
         }
+        ,pickRandomWinner() {
+            const records = this.getActiveRecords();
+            if (records.length < 2) {
+                announce('Need at least two fingers to select');
+                return null;
+            }
+            const idx = secureRandomIndex(records.length);
+            const winner = records[idx];
+            winner.el.classList.add('finger-winner');
+            announce('Random finger selected');
+            ModeManager.setSelectionActive(true); // lock mode switching (FR-015)
+            const selectBtn = $('#fingerSelectBtn');
+            if (selectBtn) selectBtn.disabled = true;
+            return winner;
+        }
+    };
+
+    // Secure random helper (US2 T022/T023)
+    function secureRandomIndex(max) {
+        if (window.crypto && window.crypto.getRandomValues) {
+            const buf = new Uint32Array(1);
+            window.crypto.getRandomValues(buf);
+            return buf[0] % max;
+        }
+        console.warn('[finger-mode] Crypto unavailable, falling back to Math.random');
+        return Math.floor(Math.random() * max);
     };
 
     // Main module
@@ -244,6 +281,7 @@
             ModeManager.init();
             // Initialize finger manager (safe even if panel hidden) T011
             FingerManager.init();
+            this.attachFingerSelectionEvents();
             console.log('Game Order Generator initialized');
         },
 
@@ -280,6 +318,14 @@
             }
 
             console.log('Event listeners attached');
+        },
+        attachFingerSelectionEvents() {
+            const btn = $('#fingerSelectBtn');
+            if (btn) {
+                btn.addEventListener('click', () => {
+                    FingerManager.pickRandomWinner();
+                });
+            }
         },
 
         // Validation rules
@@ -418,5 +464,16 @@
         setSelectionActive: (active) => ModeManager.setSelectionActive(active),
         getCurrentMode: () => ModeManager.current,
         _fingerDebug: () => ({ size: FingerManager.touches.size }) // debug helper (optional)
+        ,_fairnessSample: (iterations = 30) => {
+            const counts = {};
+            const records = FingerManager.getActiveRecords();
+            if (records.length < 2) return null;
+            for (let i = 0; i < iterations; i++) {
+                const idx = secureRandomIndex(records.length);
+                counts[idx] = (counts[idx] || 0) + 1;
+            }
+            console.table(counts);
+            return counts;
+        }
     };
 })();
