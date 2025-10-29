@@ -460,8 +460,8 @@ footer {
     border: 3px solid rgba(255,255,255,0.6);
 }
 .finger-marker.finger-active {
-    width: 120px;
-    height: 120px;
+    width: 100px;
+    height: 100px;
     font-size: 2.1rem;
     transition: width 0.12s ease, height 0.12s ease, transform 0.08s ease-out;
 }
@@ -472,13 +472,15 @@ footer {
     box-shadow: 0 0 0 6px rgba(124,58,237,0.35);
 }
 
-/* Distinct color palette per finger (max 6) */
-.finger-color-1 { background:#2563eb; }
-.finger-color-2 { background:#10b981; }
-.finger-color-3 { background:#f59e0b; }
-.finger-color-4 { background:#ef4444; }
-.finger-color-5 { background:#8b5cf6; }
-.finger-color-6 { background:#ec4899; }
+/* Unified color palette - all fingers use theme color */
+.finger-color-1,
+.finger-color-2,
+.finger-color-3,
+.finger-color-4,
+.finger-color-5,
+.finger-color-6 {
+    background: var(--color-primary);
+}
 
 /* Contrast audit enhancement (T045): strong border on default markers for better separation */
 .finger-marker { border: 3px solid rgba(255,255,255,0.85); }
