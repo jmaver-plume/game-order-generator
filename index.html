@@ -9,18 +9,18 @@
 </head>
 <body>
     <main>
-        <header role="banner">
+        <header>
             <h1>Board Game Order</h1>
         </header>
 
-        <!-- Mode toggle container (T001) -->
-        <section class="mode-toggle" role="group" aria-label="Mode selection">
-            <button type="button" class="toggle-btn" data-mode="numeric" aria-pressed="true">Player Count</button>
-            <button type="button" class="toggle-btn" data-mode="finger" aria-pressed="false">Finger Pick</button>
+        <!-- Mode toggle container -->
+        <section class="mode-toggle">
+            <button type="button" class="toggle-btn active" data-mode="numeric">Player Count</button>
+            <button type="button" class="toggle-btn" data-mode="finger">Finger Pick</button>
         </section>
 
-        <!-- Numeric mode container (existing generator) (T003 structural class) -->
-        <section class="generator numeric-mode" role="main" data-mode-panel="numeric">
+        <!-- Numeric mode container -->
+        <section class="generator numeric-mode" data-mode-panel="numeric">
             <div class="input-group">
                 <label for="playerCount">Number of Players</label>
                 <div class="input-wrapper">
@@ -31,7 +31,6 @@
                         min="2" 
                         max="20" 
                         placeholder="Enter number"
-                        aria-describedby="playerCountHint playerCountError"
                         required
                     />
                     <span class="input-icon">
@@ -40,35 +39,29 @@
                         </svg>
                     </span>
                 </div>
-                <p id="playerCountHint" class="hint sr-only">Between 2 and 20 players</p>
-                <p id="playerCountError" class="error" role="alert" aria-live="polite"></p>
+                <p id="playerCountError" class="error"></p>
             </div>
 
             <button id="generateBtn" class="btn-primary" type="button">
-                <svg class="icon" aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                <svg class="icon" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
                     <path d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 3.464V16a1 1 0 102 0v-1.268a2 2 0 000-3.464V4zM11 4a1 1 0 10-2 0v1.268a2 2 0 000 3.464V16a1 1 0 102 0V8.732a2 2 0 000-3.464V4zM16 3a1 1 0 011 1v7.268a2 2 0 010 3.464V16a1 1 0 11-2 0v-1.268a2 2 0 010-3.464V4a1 1 0 011-1z"></path>
                 </svg>
                 Generate Order
             </button>
 
-            <div id="resultSection" class="result-section hidden" role="region" aria-label="Generated turn order">
-                <div id="orderDisplay" class="order-display" aria-live="polite"></div>
+            <div id="resultSection" class="result-section hidden">
+                <div id="orderDisplay" class="order-display"></div>
             </div>
-
-            <!-- Accessibility live region for announcements -->
-            <!-- ARIA live region reused for winner + mode announcements (T004) -->
-            <div id="ariaLive" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
         </section>        
 
-        <!-- Finger selection mode (surface + centered conditional reset button) -->
-        <section class="finger-mode hidden" role="region" aria-label="Finger selection mode" data-mode-panel="finger">
-            <div class="finger-surface" id="fingerSurface" aria-label="Touch capture area" role="application" tabindex="0">
-                <button type="button" class="finger-reset-btn hidden" id="fingerResetBtn" aria-label="Reset finger selection" title="Reset">
-                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <!-- Finger selection mode -->
+        <section class="finger-mode hidden" data-mode-panel="finger">
+            <div class="finger-surface" id="fingerSurface">
+                <button type="button" class="finger-reset-btn hidden" id="fingerResetBtn" title="Reset">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="1 4 1 10 7 10"></polyline>
                         <path d="M3.51 15a9 9 0 1 0 .49-9.36L1 10"></path>
                     </svg>
-                    <span class="sr-only">Reset</span>
                 </button>
             </div>
         </section>

@@ -339,30 +339,6 @@ footer {
     font-size: var(--font-size-sm);
 }
 
-/* Accessibility - screen reader only */
-.sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border-width: 0;
-}
-
-/* Focus visibility */
-:focus {
-    /* outline: 2px solid var(--color-primary); */
-    outline-offset: 2px;
-}
-
-button:focus {
-    outline: 2px solid var(--color-primary);
-    outline-offset: 2px;
-}
-
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
     * {
@@ -411,7 +387,7 @@ button:focus {
     color: var(--color-text);
 }
 
-.toggle-btn[aria-pressed="true"] {
+.toggle-btn.active {
     background: var(--color-primary);
     color: #fff;
     border-color: var(--color-primary);
@@ -643,7 +619,7 @@ button:focus {
         color: var(--color-text);
     }
     
-    .toggle-btn[aria-pressed="true"] {
+    .toggle-btn.active {
         background: var(--color-primary);
         color: #ffffff;
         border-color: var(--color-primary);

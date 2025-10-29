@@ -26,25 +26,6 @@
         return fisherYatesShuffle(order);
     }
 
-    // Announce message to screen readers (centralized + dedup)
-    function announce(message) {
-        const liveRegion = $('#ariaLive');
-        if (!liveRegion) return;
-        liveRegion.textContent = message;
-        setTimeout(() => { if (liveRegion.textContent === message) liveRegion.textContent = ''; }, 1100);
-    }
-        const Announce = {
-            mode(mode) { announce(mode === 'numeric' ? 'Player Count mode' : 'Finger Pick mode'); },
-            firstFinger() { announce('First finger detected'); },
-            fingerCount(n) { announce(`${n} finger${n>1?'s':''} detected`); },
-            selecting() { announce('Selecting random finger…'); },
-            winner() { announce('Random finger selected'); },
-            reset() { announce('Reset complete, place fingers'); },
-            needTwo() { announce('Need at least two fingers to select'); },
-            max(max) { announce(`Maximum of ${max} fingers reached`); },
-            blockedSwitch() { announce('Cannot switch modes during selection'); }
-        };
-
     // Mode Manager (Phase2 T006-T010): manages numeric vs finger panel visibility & guards during selection
     const ModeManager = {
         current: 'numeric',
@@ -57,14 +38,14 @@
                 finger: document.querySelector('[data-mode-panel="finger"]')
             };
             this.attachEvents();
-            this.applyMode('numeric', { announce: false });
+            this.applyMode('numeric');
             // Load persisted mode (T044)
             let initial = 'numeric';
             try {
                 const stored = localStorage.getItem('gom:lastMode');
                 if (stored === 'finger' || stored === 'numeric') initial = stored;
             } catch(_) {}
-            this.applyMode(initial, { announce: false });
+            this.applyMode(initial);
         },
         attachEvents() {
             if (this.els.toggleButtons) {
@@ -80,18 +61,21 @@
             if (mode === this.current) return;
             if (this.selectionActive) {
                 // Guard mode switch mid-selection (spec FR-015 placeholder)
-                announce('Cannot switch modes during selection');
                 return;
             }
-            this.applyMode(mode, { announce: true });
+            this.applyMode(mode);
         },
-        applyMode(mode, { announce: doAnnounce } = { announce: true }) {
+        applyMode(mode) {
             this.current = mode;
-            // Update button pressed states
+            // Update button active states
             if (this.els.toggleButtons) {
                 this.els.toggleButtons.forEach(btn => {
                     const m = btn.getAttribute('data-mode');
-                    btn.setAttribute('aria-pressed', m === mode ? 'true' : 'false');
+                    if (m === mode) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
                 });
             }
             // Toggle panels
@@ -105,9 +89,6 @@
                     panel.classList.remove('mode-panel-active');
                 }
             });
-            if (doAnnounce) {
-            if (doAnnounce) Announce.mode(mode);
-            }
         },
         setSelectionActive(active) {
             this.selectionActive = !!active;
@@ -182,15 +163,13 @@
         addTouch(e) {
             if (ModeManager.selectionActive) return; // Ignore new touches after selection (T055)
             if (this.touches.size >= this.maxTouches) {
-                // Announce max reached (T019) and pulse surface
-                announce('Maximum of ' + this.maxTouches + ' fingers reached');
+                // Max reached - pulse surface
                 this.pulseMax();
                 return; // ignore beyond limit
             }
             // Palm-size heuristic (T041): ignore very large contacts (approximate palm)
             const palmThreshold = 140; // px heuristic; typical finger contact ~40-80px
             if ((e.width && e.width > palmThreshold) || (e.height && e.height > palmThreshold)) {
-                announce('Large contact ignored');
                 return;
             }
             if (this.touches.has(e.pointerId)) return;
@@ -226,8 +205,6 @@
             const index = this.touches.size + 1;
             el.className = 'finger-marker finger-color-' + index;
             // Removed visible numeric label (T017 updated) – rely on distinct color.
-            // Provide accessible name so screen readers can announce finger changes.
-            el.setAttribute('aria-label', 'Finger ' + index);
             this.surface.appendChild(el);
             // Apply active size state (T056)
             el.classList.add('finger-active');
@@ -245,11 +222,6 @@
         updateStatus() {
             const count = this.touches.size;
             if (count !== this.previousCount && !ModeManager.selectionActive) {
-                if (this.previousCount === 0 && count > 0) {
-                    announce('First finger detected');
-                } else {
-                    announce(`${count} finger${count>1?'s':''} detected`);
-                }
                 this.previousCount = count;
             }
             this.scheduleAutoSelection();
@@ -279,7 +251,6 @@
         ,pickRandomWinner() {
             const records = this.getActiveRecords();
             if (records.length < 2) {
-                announce('Need at least two fingers to select');
                 return null;
             }
             // Stop any running anticipation animation
@@ -287,7 +258,6 @@
             const idx = secureRandomIndex(records.length);
             const winner = records[idx];
             // Keep winner styling identical to active markers; no special class.
-            announce('Random finger selected');
             ModeManager.setSelectionActive(true); // lock mode switching (FR-015)
             this.winnerEl = winner.el;
             // Remove all other markers (T053)
@@ -346,7 +316,6 @@
             this.winnerEl = null;
             ModeManager.setSelectionActive(false);
             this.previousCount = 0;
-            announce('Reset complete, place fingers');
             if (this.surface && this.surface.focus) {
                 this.surface.focus();
             }
@@ -381,7 +350,6 @@
                 // Reduced motion fallback (T046): apply static indicator instead of cycling animation
                 const markers = this.getActiveMarkers();
                 if (markers.length < 2) return;
-                announce('Selecting random finger…');
                 markers.forEach(m => m.classList.add('finger-select-pending'));
                 return;
             }
@@ -389,7 +357,6 @@
             if (ModeManager.selectionActive || this.animInterval) return;
             const markers = this.getActiveMarkers();
             if (markers.length < 2) return;
-            announce('Selecting random finger…');
             this.animCycleIndex = 0;
             this.animInterval = setInterval(() => {
                 const currentMarkers = this.getActiveMarkers();
@@ -530,7 +497,6 @@
             const { errorMsg } = this.elements;
             if (errorMsg) {
                 errorMsg.textContent = message;
-                announce(message);
             }
         },
 
@@ -595,9 +561,6 @@
             // Update display
             orderDisplay.textContent = orderString;
             resultSection.classList.remove('hidden');
-            
-            // Announce to screen readers
-            announce(`Turn order generated: ${orderString}`);
         }
     };
 
