@@ -468,13 +468,20 @@ footer {
     -webkit-touch-callout: none; /* Disable callout menu on long press */
     -webkit-tap-highlight-color: transparent; /* Remove tap highlight */
     transition: transform 0.08s ease-out, background-color 0.2s;
-    border: 3px solid rgba(255,255,255,0.6);
+    border: none;
 }
 .finger-marker.finger-active {
     width: 100px;
     height: 100px;
     font-size: 2.1rem;
     transition: width 0.12s ease, height 0.12s ease, transform 0.08s ease-out;
+}
+
+.finger-marker.finger-frozen {
+    width: 120px;
+    height: 120px;
+    font-size: 2.4rem;
+    transition: width 0.3s ease, height 0.3s ease, font-size 0.3s ease;
 }
 
 /* Reduced motion fallback pending selection indicator (T046) */
@@ -494,12 +501,12 @@ footer {
 }
 
 /* Contrast audit enhancement (T045): strong border on default markers for better separation */
-.finger-marker { border: 3px solid rgba(255,255,255,0.85); }
+.finger-marker { border: none; }
 
 
 /* High contrast adjustments */
 @media (prefers-contrast: high) {
-    .finger-marker { border-color:#000; }
+    .finger-marker { border: 2px solid #000; }
 }
 
 /* Mode panel transition utilities (T008) */
@@ -524,18 +531,22 @@ footer {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--color-primary);
-    color: #fff;
-    border: none;
+    background: rgba(127, 140, 141, 0.3);
+    color: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 50%;
     cursor: pointer;
     box-shadow: none;
-    transition: background 0.2s ease, transform 0.2s ease;
+    transition: background 0.2s ease, transform 0.2s ease, color 0.2s ease;
     padding: 0;
+    backdrop-filter: blur(4px);
 }
-.finger-reset-btn:hover { background: var(--color-primary-hover); }
+.finger-reset-btn:hover { 
+    background: rgba(127, 140, 141, 0.5); 
+    color: rgba(255, 255, 255, 0.9);
+}
 .finger-reset-btn:active { transform: translate(-50%, -50%) scale(0.94); }
-.finger-reset-btn:focus { outline: 3px solid #fff; outline-offset: 4px; }
+.finger-reset-btn:focus { outline: 2px solid rgba(255, 255, 255, 0.3); outline-offset: 4px; }
 
 /* Anticipation cycle animation (Phase 5 Option B) */
 .finger-anim-cycle {
@@ -552,10 +563,10 @@ footer {
     animation: fingerWinner 0.55s ease-out forwards;
 }
 @keyframes fingerWinner {
-    0% { box-shadow: 0 0 0 0 rgba(255,255,255,0.85); }
-    40% { box-shadow: 0 0 0 14px rgba(255,255,255,0.55); }
-    70% { box-shadow: 0 0 0 6px rgba(255,255,255,0.70); }
-    100% { box-shadow: 0 0 0 4px rgba(255,255,255,0.65); }
+    0% { filter: brightness(1); }
+    40% { filter: brightness(1.3); }
+    70% { filter: brightness(1.15); }
+    100% { filter: brightness(1.2); }
 }
 
 @media (prefers-reduced-motion: reduce) {

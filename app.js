@@ -244,6 +244,8 @@
         ,flushMoves() {
             const rect = this.surface.getBoundingClientRect();
             for (const record of this.touches.values()) {
+                // Skip if marker is frozen (winner)
+                if (record.el.classList.contains('finger-frozen')) continue;
                 const relX = record.x - rect.left;
                 const relY = record.y - rect.top;
                 const half = record.el.offsetWidth / 2;
@@ -282,10 +284,22 @@
                 ModeManager.setSelectionActive(true); // lock mode switching (FR-015)
                 this.winnerGroup = winningGroup.map(r => r.el);
                 
+                // Freeze winner positions before removing from map
+                winningGroup.forEach(winner => {
+                    winner.el.classList.add('finger-frozen'); // Mark as frozen to prevent updates
+                });
+                
                 // Remove losing group markers
                 for (const [pid, record] of Array.from(this.touches.entries())) {
                     if (losingGroup.some(lr => lr.el === record.el)) {
                         record.el.remove();
+                        this.touches.delete(pid);
+                    }
+                }
+                
+                // Remove winners from tracking but keep elements positioned
+                for (const [pid, record] of Array.from(this.touches.entries())) {
+                    if (winningGroup.some(wr => wr.el === record.el)) {
                         this.touches.delete(pid);
                     }
                 }
@@ -332,6 +346,10 @@
                 // Keep winner styling identical to active markers; no special class.
                 ModeManager.setSelectionActive(true); // lock mode switching (FR-015)
                 this.winnerEl = winner.el;
+                
+                // Freeze winner position before removing from map
+                winner.el.classList.add('finger-frozen'); // Mark as frozen to prevent updates
+                
                 // Remove all other markers (T053)
                 for (const [pid, record] of Array.from(this.touches.entries())) {
                     if (record.el !== winner.el) {
@@ -339,6 +357,14 @@
                         this.touches.delete(pid);
                     }
                 }
+                
+                // Remove winner from tracking but keep element positioned
+                for (const [pid, record] of Array.from(this.touches.entries())) {
+                    if (record.el === winner.el) {
+                        this.touches.delete(pid);
+                    }
+                }
+                
                 // T033 (placeholder) Optional future enhancement: play a subtle sound effect here
                 // Example stub: // if (Audio.enabled) play('select.mp3');
                 // Apply winner pulse animation
