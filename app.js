@@ -34,8 +34,8 @@
         init() {
             this.els.toggleButtons = $$('.mode-toggle .toggle-btn');
             this.els.panels = {
-                numeric: document.querySelector('[data-mode-panel="numeric"]'),
-                finger: document.querySelector('[data-mode-panel="finger"]')
+              numeric: document.querySelector('[data-mode-panel="numeric"]'),
+              finger: document.querySelector('[data-mode-panel="finger"]'),
             };
             this.attachEvents();
             this.applyMode('numeric');
@@ -51,7 +51,7 @@
             if (this.els.toggleButtons) {
                 this.els.toggleButtons.forEach(btn => {
                     btn.addEventListener('click', () => {
-                        const targetMode = btn.getAttribute('data-mode');
+                        let targetMode = btn.getAttribute('data-mode');
                         this.requestModeChange(targetMode);
                     });
                 });

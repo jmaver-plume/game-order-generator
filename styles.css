@@ -98,6 +98,14 @@ h1 {
     font-size: 1.875rem;
     font-weight: 700;
     color: var(--color-text);
+    margin-bottom: var(--spacing-xs);
+}
+
+.subtitle {
+    font-size: var(--font-size-base);
+    color: var(--color-text-muted);
+    font-weight: 500;
+    margin: 0;
 }
 
 /* Generator section */
