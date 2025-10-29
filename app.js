@@ -51,7 +51,7 @@
             if (this.els.toggleButtons) {
                 this.els.toggleButtons.forEach(btn => {
                     btn.addEventListener('click', () => {
-                        let targetMode = btn.getAttribute('data-mode');
+                        const targetMode = btn.getAttribute('data-mode');
                         this.requestModeChange(targetMode);
                     });
                 });
@@ -68,25 +68,24 @@
         applyMode(mode) {
             this.current = mode;
             // Update button active states
-            if (this.els.toggleButtons) {
-                this.els.toggleButtons.forEach(btn => {
-                    const m = btn.getAttribute('data-mode');
-                    if (m === mode) {
-                        btn.classList.add('active');
-                    } else {
-                        btn.classList.remove('active');
-                    }
-                });
-            }
+            this.els.toggleButtons.forEach((btn) => {
+                const m = btn.getAttribute("data-mode");
+                if (m === mode) {
+                    btn.classList.add("active");
+                } else {
+                    btn.classList.remove("active");
+                }
+            });
             // Toggle panels
             Object.entries(this.els.panels).forEach(([key, panel]) => {
                 if (!panel) return;
-                if (key === mode) {
-                    panel.classList.remove('hidden', 'mode-panel-hidden');
-                    panel.classList.add('mode-panel-active');
+                const cleanMode = mode === 'group' ? 'finger' : mode
+                if (key === cleanMode) {
+                  panel.classList.remove("hidden", "mode-panel-hidden");
+                  panel.classList.add("mode-panel-active");
                 } else {
-                    panel.classList.add('hidden', 'mode-panel-hidden');
-                    panel.classList.remove('mode-panel-active');
+                  panel.classList.add("hidden", "mode-panel-hidden");
+                  panel.classList.remove("mode-panel-active");
                 }
             });
         },
@@ -111,6 +110,7 @@
         animInterval: null,
         animCycleIndex: 0,
         winnerEl: null,
+        winnerGroup: [], // for group mode: array of winner elements
         config: {
             autoSelectDelay: 2000,
             preAnimationDuration: 500, // ms length of anticipation before winner
@@ -140,7 +140,8 @@
             });
         },
         handlePointerEvent(e) {
-            if (ModeManager.current !== 'finger') return; // Only active in finger mode
+            const currentMode = ModeManager.current;
+            if (currentMode === 'numeric') return; // Only active in finger/group mode
             if (e.type === 'pointerdown') {
                 // Prevent default to block implicit multi-touch gestures (Safari zoom/tab switch)
                 if (e.cancelable) {
@@ -152,7 +153,7 @@
             }
         },
         handlePointerMove(e) {
-            if (ModeManager.current !== 'finger') return;
+            if (ModeManager.current === "numeric") return;
             const data = this.touches.get(e.pointerId);
             if (!data) return;
             // Store latest coordinates; batch update via rAF (T015)
@@ -162,7 +163,12 @@
         },
         addTouch(e) {
             if (ModeManager.selectionActive) return; // Ignore new touches after selection (T055)
-            if (this.touches.size >= this.maxTouches) {
+            
+            // For group mode, limit to exactly 4 touches
+            const currentMode = ModeManager.current;
+            const maxAllowed = currentMode === 'group' ? 4 : this.maxTouches;
+            
+            if (this.touches.size >= maxAllowed) {
                 // Max reached - pulse surface
                 this.pulseMax();
                 return; // ignore beyond limit
@@ -183,8 +189,12 @@
         removeTouch(pointerId) {
             const data = this.touches.get(pointerId);
             if (!data) return;
-            // Persist winner marker even after lift if selection done (T053)
-            if (ModeManager.selectionActive && data.el === this.winnerEl) {
+            // Persist winner marker(s) even after lift if selection done (T053)
+            const isWinner = ModeManager.current === 'group' 
+                ? this.winnerGroup.includes(data.el)
+                : data.el === this.winnerEl;
+            
+            if (ModeManager.selectionActive && isWinner) {
                 // Remove from tracking but keep element
                 this.touches.delete(pointerId);
             } else {
@@ -250,48 +260,111 @@
         }
         ,pickRandomWinner() {
             const records = this.getActiveRecords();
-            if (records.length < 2) {
-                return null;
-            }
-            // Stop any running anticipation animation
-            this.stopPreAnimation();
-            const idx = secureRandomIndex(records.length);
-            const winner = records[idx];
-            // Keep winner styling identical to active markers; no special class.
-            ModeManager.setSelectionActive(true); // lock mode switching (FR-015)
-            this.winnerEl = winner.el;
-            // Remove all other markers (T053)
-            for (const [pid, record] of Array.from(this.touches.entries())) {
-                if (record.el !== winner.el) {
-                    record.el.remove();
-                    this.touches.delete(pid);
+            const currentMode = ModeManager.current;
+            
+            if (currentMode === 'group') {
+                // Group mode: need exactly 4 fingers
+                if (records.length !== 4) {
+                    return null;
                 }
-            }
-            // T033 (placeholder) Optional future enhancement: play a subtle sound effect here
-            // Example stub: // if (Audio.enabled) play('select.mp3');
-            // Apply winner pulse animation
-            if (!window.matchMedia || !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-                winner.el.classList.add('finger-anim-final');
-                winner.el.addEventListener('animationend', () => {
-                    winner.el.classList.remove('finger-anim-final');
-                }, { once: true });
-            } else {
-                // Reduced motion emphasis: temporary static outline pulse
-                winner.el.classList.add('finger-select-pending');
-                setTimeout(() => winner.el.classList.remove('finger-select-pending'), 600);
-            }
-            this.updateStatus();
-            // Delay showing reset button until after short pause (user requested 1–2s)
-            if (this.resetBtn) {
-                this.resetBtn.classList.add('hidden');
-                clearTimeout(this._resetRevealTimer);
-                this._resetRevealTimer = setTimeout(() => {
-                    if (this.winnerEl && ModeManager.selectionActive) {
-                        this.resetBtn.classList.remove('hidden');
+                // Stop any running anticipation animation
+                this.stopPreAnimation();
+                
+                // Randomly divide into 2 groups of 2
+                const shuffled = fisherYatesShuffle([...records]);
+                const group1 = [shuffled[0], shuffled[1]];
+                const group2 = [shuffled[2], shuffled[3]];
+                
+                // Randomly pick winning group
+                const winningGroup = Math.random() < 0.5 ? group1 : group2;
+                const losingGroup = winningGroup === group1 ? group2 : group1;
+                
+                ModeManager.setSelectionActive(true); // lock mode switching (FR-015)
+                this.winnerGroup = winningGroup.map(r => r.el);
+                
+                // Remove losing group markers
+                for (const [pid, record] of Array.from(this.touches.entries())) {
+                    if (losingGroup.some(lr => lr.el === record.el)) {
+                        record.el.remove();
+                        this.touches.delete(pid);
                     }
-                }, 1500); // 1.5s compromise delay
+                }
+                
+                // Apply winner pulse animation to both winners
+                if (!window.matchMedia || !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                    winningGroup.forEach(winner => {
+                        winner.el.classList.add('finger-anim-final');
+                        winner.el.addEventListener('animationend', () => {
+                            winner.el.classList.remove('finger-anim-final');
+                        }, { once: true });
+                    });
+                } else {
+                    // Reduced motion emphasis: temporary static outline pulse
+                    winningGroup.forEach(winner => {
+                        winner.el.classList.add('finger-select-pending');
+                        setTimeout(() => winner.el.classList.remove('finger-select-pending'), 600);
+                    });
+                }
+                
+                this.updateStatus();
+                
+                // Delay showing reset button
+                if (this.resetBtn) {
+                    this.resetBtn.classList.add('hidden');
+                    clearTimeout(this._resetRevealTimer);
+                    this._resetRevealTimer = setTimeout(() => {
+                        if (this.winnerGroup.length > 0 && ModeManager.selectionActive) {
+                            this.resetBtn.classList.remove('hidden');
+                        }
+                    }, 1500);
+                }
+                
+                return winningGroup;
+            } else {
+                // Finger mode: need at least 2 fingers
+                if (records.length < 2) {
+                    return null;
+                }
+                // Stop any running anticipation animation
+                this.stopPreAnimation();
+                const idx = secureRandomIndex(records.length);
+                const winner = records[idx];
+                // Keep winner styling identical to active markers; no special class.
+                ModeManager.setSelectionActive(true); // lock mode switching (FR-015)
+                this.winnerEl = winner.el;
+                // Remove all other markers (T053)
+                for (const [pid, record] of Array.from(this.touches.entries())) {
+                    if (record.el !== winner.el) {
+                        record.el.remove();
+                        this.touches.delete(pid);
+                    }
+                }
+                // T033 (placeholder) Optional future enhancement: play a subtle sound effect here
+                // Example stub: // if (Audio.enabled) play('select.mp3');
+                // Apply winner pulse animation
+                if (!window.matchMedia || !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                    winner.el.classList.add('finger-anim-final');
+                    winner.el.addEventListener('animationend', () => {
+                        winner.el.classList.remove('finger-anim-final');
+                    }, { once: true });
+                } else {
+                    // Reduced motion emphasis: temporary static outline pulse
+                    winner.el.classList.add('finger-select-pending');
+                    setTimeout(() => winner.el.classList.remove('finger-select-pending'), 600);
+                }
+                this.updateStatus();
+                // Delay showing reset button until after short pause (user requested 1–2s)
+                if (this.resetBtn) {
+                    this.resetBtn.classList.add('hidden');
+                    clearTimeout(this._resetRevealTimer);
+                    this._resetRevealTimer = setTimeout(() => {
+                        if (this.winnerEl && ModeManager.selectionActive) {
+                            this.resetBtn.classList.remove('hidden');
+                        }
+                    }, 1500); // 1.5s compromise delay
+                }
+                return winner;
             }
-            return winner;
         }
         ,handleResetClick() {
             this.resetState();
@@ -314,6 +387,11 @@
                 this.winnerEl.remove();
             }
             this.winnerEl = null;
+            // Clear winner group for group mode
+            if (this.winnerGroup.length > 0) {
+                this.winnerGroup.forEach(el => el.remove());
+                this.winnerGroup = [];
+            }
             ModeManager.setSelectionActive(false);
             this.previousCount = 0;
             if (this.surface && this.surface.focus) {
@@ -325,12 +403,20 @@
             // Clear existing timers
             if (this.autoSelectTimer) { clearTimeout(this.autoSelectTimer); this.autoSelectTimer = null; }
             if (this.preAnimTimer) { clearTimeout(this.preAnimTimer); this.preAnimTimer = null; }
+            
             // Guard conditions
-            if (ModeManager.selectionActive || this.touches.size < 2) return;
+            if (ModeManager.selectionActive) return;
+            
+            const currentMode = ModeManager.current;
+            const requiredCount = currentMode === 'group' ? 4 : 2;
+            
+            if (this.touches.size < requiredCount) return;
+            
             const { autoSelectDelay, preAnimationDuration } = this.config;
             // Schedule winner selection
             this.autoSelectTimer = setTimeout(() => {
-                if (!ModeManager.selectionActive && this.touches.size >= 2) {
+                const checkCount = currentMode === 'group' ? 4 : 2;
+                if (!ModeManager.selectionActive && this.touches.size >= checkCount) {
                     this.pickRandomWinner();
                 } else {
                     this.stopPreAnimation();
@@ -339,7 +425,8 @@
             // Schedule anticipation start (avoid negative)
             const startDelay = Math.max(0, autoSelectDelay - preAnimationDuration);
             this.preAnimTimer = setTimeout(() => {
-                if (!ModeManager.selectionActive && this.touches.size >= 2) {
+                const checkCount = currentMode === 'group' ? 4 : 2;
+                if (!ModeManager.selectionActive && this.touches.size >= checkCount) {
                     this.startPreAnimation();
                 }
             }, startDelay);
