@@ -1,10 +1,11 @@
 <!--
 Sync Impact Report:
-- Version change: new → 1.0.0
-- Added principles: Static-First, Mobile-Responsive Design, Accessibility-First, Performance-Optimized, User-Centered Design
-- Added sections: Technical Standards, Quality Assurance
-- Templates requiring updates: ✅ All verified compatible
-- Follow-up TODOs: None
+- Version change: 1.0.0 → 2.0.0
+- Removed principles: Accessibility-First (III), Performance-Optimized (IV)
+- Modified principles: User-Centered Design (V → III, renumbered)
+- Rationale: Removing two core principles constitutes backward-incompatible governance change
+- Templates requiring updates: ✅ plan-template.md, ✅ spec-template.md, ✅ tasks-template.md
+- Follow-up TODOs: Review existing feature specs (001-turn-order, 002-finger-selection) to remove accessibility/performance requirements if desired
 -->
 
 # Game Order Generator Constitution
@@ -21,17 +22,7 @@ The application MUST provide an optimal experience across all device sizes from 
 
 **Rationale**: Game organizers often work on mobile devices during events and need full functionality regardless of device.
 
-### III. Accessibility-First (NON-NEGOTIABLE)
-All features MUST comply with WCAG 2.1 AA standards. Keyboard navigation MUST be fully supported. Screen reader compatibility is mandatory. Color MUST NOT be the only means of conveying information. Alt text and ARIA labels MUST be provided for all interactive elements.
-
-**Rationale**: Gaming communities are diverse, and the tool must be usable by everyone regardless of ability.
-
-### IV. Performance-Optimized
-Initial page load MUST complete within 3 seconds on 3G connections. Total bundle size MUST remain under 500KB (including assets). All user interactions MUST provide immediate feedback within 100ms. No external CDN dependencies are allowed for critical functionality.
-
-**Rationale**: Game events often have poor internet connectivity, requiring fast, lightweight applications.
-
-### V. User-Centered Design
+### III. User-Centered Design
 Interface design MUST prioritize common game organization workflows. Features MUST be discoverable without documentation. Error states MUST provide clear, actionable guidance. User input MUST be validated in real-time with helpful feedback.
 
 **Rationale**: Game organizers need intuitive tools that work under time pressure during events.
@@ -42,20 +33,16 @@ Interface design MUST prioritize common game organization workflows. Features MU
 **Browser Support**: Chrome 90+, Firefox 88+, Safari 14+, Edge 90+
 **Build Tools**: Optional build step for optimization only (source must work unbundled)
 **File Structure**: Single-page application with modular JavaScript components
-**Testing**: Manual testing for all user scenarios, automated accessibility testing
+**Testing**: Manual testing for all user scenarios
 **Documentation**: Inline code comments for complex logic, README for setup
 
 ## Quality Assurance
 
 **Testing Requirements**:
 - Manual testing on mobile, tablet, and desktop viewports
-- Screen reader testing with NVDA/VoiceOver
-- Performance testing on throttled connections
 - Cross-browser compatibility verification
 
 **Review Process**:
-- All changes require verification against accessibility standards
-- Performance budget must be validated before deployment
 - Mobile usability must be confirmed on actual devices
 
 ## Governance
@@ -64,6 +51,6 @@ This constitution supersedes all other development practices. All features and c
 
 **Amendment Process**: Constitution changes require updating this document with rationale, incrementing version number, and updating dependent templates.
 
-**Compliance Review**: Every feature implementation must verify adherence to all five core principles before completion.
+**Compliance Review**: Every feature implementation must verify adherence to all three core principles before completion.
 
-**Version**: 1.0.0 | **Ratified**: 2025-10-26 | **Last Amended**: 2025-10-26
+**Version**: 2.0.0 | **Ratified**: 2025-10-26 | **Last Amended**: 2025-10-29
